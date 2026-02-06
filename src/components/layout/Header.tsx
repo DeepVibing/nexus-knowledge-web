@@ -29,17 +29,17 @@ export function Header() {
   };
 
   return (
-    <header className="flex items-center justify-between h-16 px-6 bg-slate-900 border-b border-slate-800">
+    <header className="flex items-center justify-between h-16 px-6 bg-[#141414] border-b border-[#2A2A2A]">
       {/* Left: Workspace Selector */}
       <div className="relative">
         <button
           onClick={() => setShowWorkspaceMenu(!showWorkspaceMenu)}
-          className="flex items-center gap-2 px-3 py-2 text-white bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors"
+          className="flex items-center gap-2 px-3 py-2 text-[#F5F5F5] bg-[#1C1C1C] hover:bg-[#2A2A2A] rounded-sm transition-colors border border-[#2A2A2A]"
         >
-          <span className="font-medium">
+          <span className="font-medium text-sm">
             {workspace?.name || 'Select Workspace'}
           </span>
-          <ChevronDown className="h-4 w-4" />
+          <ChevronDown className="h-4 w-4 text-[#666666]" />
         </button>
 
         {showWorkspaceMenu && (
@@ -48,7 +48,7 @@ export function Header() {
               className="fixed inset-0 z-10"
               onClick={() => setShowWorkspaceMenu(false)}
             />
-            <div className="absolute top-full left-0 mt-2 w-64 bg-slate-800 border border-slate-700 rounded-lg shadow-lg z-20">
+            <div className="absolute top-full left-0 mt-2 w-64 bg-[#1C1C1C] border border-[#2A2A2A] rounded-sm shadow-lg z-20">
               <div className="p-2">
                 {workspacesData?.data.map((ws) => (
                   <button
@@ -58,31 +58,31 @@ export function Header() {
                       setShowWorkspaceMenu(false);
                     }}
                     className={cn(
-                      'w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors',
+                      'w-full flex items-center gap-3 px-3 py-2 rounded-sm text-left transition-colors',
                       ws.id === workspace?.id
-                        ? 'bg-indigo-600 text-white'
-                        : 'text-slate-300 hover:bg-slate-700'
+                        ? 'bg-[rgba(232,10,222,0.08)] text-[#E80ADE]'
+                        : 'text-[#A0A0A0] hover:bg-[#2A2A2A] hover:text-[#F5F5F5]'
                     )}
                   >
-                    <div className="w-8 h-8 rounded bg-slate-700 flex items-center justify-center text-lg">
+                    <div className="w-8 h-8 rounded-sm bg-[#2A2A2A] flex items-center justify-center text-lg">
                       {ws.icon || ws.name.charAt(0)}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium truncate">{ws.name}</p>
-                      <p className="text-xs text-slate-400">
+                      <p className="font-medium text-sm truncate">{ws.name}</p>
+                      <p className="text-xs text-[#666666]">
                         {ws.sourcesCount} sources
                       </p>
                     </div>
                   </button>
                 ))}
               </div>
-              <div className="border-t border-slate-700 p-2">
+              <div className="border-t border-[#2A2A2A] p-2">
                 <button
                   onClick={() => {
                     navigate(ROUTES.WORKSPACES);
                     setShowWorkspaceMenu(false);
                   }}
-                  className="w-full px-3 py-2 text-sm text-indigo-400 hover:bg-slate-700 rounded-lg transition-colors text-left"
+                  className="w-full px-3 py-2 text-sm text-[#E80ADE] hover:bg-[#2A2A2A] rounded-sm transition-colors text-left"
                 >
                   Manage Workspaces
                 </button>
@@ -104,7 +104,7 @@ export function Header() {
       <div className="flex items-center gap-4">
         <button
           onClick={toggleTheme}
-          className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
+          className="p-2 text-[#666666] hover:text-[#F5F5F5] hover:bg-[#1C1C1C] rounded-sm transition-colors"
         >
           {resolvedTheme === 'dark' ? (
             <Sun className="h-5 w-5" />
@@ -116,9 +116,9 @@ export function Header() {
         <div className="relative">
           <button
             onClick={() => setShowUserMenu(!showUserMenu)}
-            className="flex items-center gap-2 p-1 hover:bg-slate-800 rounded-lg transition-colors"
+            className="flex items-center gap-2 p-1 hover:bg-[#1C1C1C] rounded-sm transition-colors"
           >
-            <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white font-medium">
+            <div className="w-8 h-8 rounded-sm bg-[#E80ADE] flex items-center justify-center text-white font-medium text-sm">
               {user?.name?.charAt(0) || 'U'}
             </div>
           </button>
@@ -129,22 +129,22 @@ export function Header() {
                 className="fixed inset-0 z-10"
                 onClick={() => setShowUserMenu(false)}
               />
-              <div className="absolute top-full right-0 mt-2 w-48 bg-slate-800 border border-slate-700 rounded-lg shadow-lg z-20">
-                <div className="p-3 border-b border-slate-700">
-                  <p className="font-medium text-white truncate">{user?.name}</p>
-                  <p className="text-sm text-slate-400 truncate">{user?.email}</p>
+              <div className="absolute top-full right-0 mt-2 w-48 bg-[#1C1C1C] border border-[#2A2A2A] rounded-sm shadow-lg z-20">
+                <div className="p-3 border-b border-[#2A2A2A]">
+                  <p className="font-medium text-[#F5F5F5] text-sm truncate">{user?.name}</p>
+                  <p className="text-xs text-[#666666] truncate">{user?.email}</p>
                 </div>
                 <div className="p-2">
                   <button
                     onClick={() => setShowUserMenu(false)}
-                    className="w-full flex items-center gap-2 px-3 py-2 text-slate-300 hover:bg-slate-700 rounded-lg transition-colors"
+                    className="w-full flex items-center gap-2 px-3 py-2 text-[#A0A0A0] hover:bg-[#2A2A2A] rounded-sm transition-colors text-sm"
                   >
                     <User className="h-4 w-4" />
                     Profile
                   </button>
                   <button
                     onClick={handleLogout}
-                    className="w-full flex items-center gap-2 px-3 py-2 text-red-400 hover:bg-slate-700 rounded-lg transition-colors"
+                    className="w-full flex items-center gap-2 px-3 py-2 text-red-400 hover:bg-[#2A2A2A] rounded-sm transition-colors text-sm"
                   >
                     <LogOut className="h-4 w-4" />
                     Logout

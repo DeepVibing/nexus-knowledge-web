@@ -124,7 +124,7 @@ export function FabricChat() {
       />
 
       {/* Chat Area */}
-      <div className="flex-1 flex flex-col bg-slate-900">
+      <div className="flex-1 flex flex-col bg-[#0A0A0A]">
         {/* Messages */}
         <div className="flex-1 overflow-y-auto p-6">
           {allMessages.length === 0 ? (
@@ -133,8 +133,8 @@ export function FabricChat() {
               title="Start a conversation"
               description="Ask questions about your knowledge base and get AI-powered answers with citations."
               action={
-                <div className="flex items-center gap-2 text-sm text-slate-400">
-                  <Sparkles className="h-4 w-4 text-indigo-400" />
+                <div className="flex items-center gap-2 text-sm text-[#666666]">
+                  <Sparkles className="h-4 w-4 text-[#E80ADE]" />
                   Powered by RAG
                 </div>
               }

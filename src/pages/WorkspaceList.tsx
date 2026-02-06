@@ -50,13 +50,15 @@ export default function WorkspaceList() {
   const workspaces = data?.data || [];
 
   return (
-    <div className="min-h-screen bg-slate-900 p-8">
+    <div className="min-h-screen bg-[#0A0A0A] p-8">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-white mb-2">Workspaces</h1>
-            <p className="text-slate-400">
+            <h1 className="text-3xl font-light tracking-[0.1em] uppercase text-[#F5F5F5] mb-2" style={{ fontFamily: 'var(--font-heading)' }}>
+              Workspaces
+            </h1>
+            <p className="text-[#666666] text-sm">
               Manage your knowledge bases and collaborate with your team
             </p>
           </div>
@@ -97,15 +99,15 @@ export default function WorkspaceList() {
                 className="cursor-pointer"
               >
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-lg bg-indigo-600 flex items-center justify-center text-xl">
+                  <div className="w-12 h-12 rounded-sm bg-[#E80ADE] flex items-center justify-center text-xl text-white">
                     {workspace.icon || workspace.name.charAt(0)}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-white truncate mb-1">
+                    <h3 className="font-medium text-[#F5F5F5] truncate mb-1">
                       {workspace.name}
                     </h3>
                     {workspace.description && (
-                      <p className="text-sm text-slate-400 line-clamp-2 mb-2">
+                      <p className="text-sm text-[#666666] line-clamp-2 mb-2">
                         {workspace.description}
                       </p>
                     )}
@@ -146,7 +148,7 @@ export default function WorkspaceList() {
               }
             />
           </div>
-          <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-slate-700">
+          <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-[#2A2A2A]">
             <Button variant="ghost" onClick={() => setShowCreateModal(false)}>
               Cancel
             </Button>

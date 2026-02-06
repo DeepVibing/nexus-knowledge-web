@@ -55,7 +55,7 @@ export function EntityBrowser({
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-white">Entities</h1>
+        <h1 className="text-2xl font-medium tracking-wide text-[#F5F5F5]">Entities</h1>
         <div className="flex items-center gap-2">
           {onExtractEntities && (
             <Button variant="secondary" onClick={onExtractEntities}>
@@ -82,15 +82,15 @@ export function EntityBrowser({
         </div>
 
         <div className="flex items-center gap-2">
-          <Filter className="h-4 w-4 text-slate-400" />
+          <Filter className="h-4 w-4 text-[#666666]" />
           <div className="flex gap-1">
             <button
               onClick={() => setSelectedType(null)}
               className={cn(
-                'px-3 py-1.5 text-sm rounded-lg transition-colors',
+                'px-3 py-1.5 text-sm rounded-sm transition-colors',
                 !selectedType
-                  ? 'bg-indigo-600 text-white'
-                  : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                  ? 'bg-[#E80ADE] text-white'
+                  : 'bg-[#1C1C1C] text-[#A0A0A0] hover:bg-[#2A2A2A] border border-[#2A2A2A]'
               )}
             >
               All
@@ -100,10 +100,10 @@ export function EntityBrowser({
                 key={type}
                 onClick={() => setSelectedType(type)}
                 className={cn(
-                  'px-3 py-1.5 text-sm rounded-lg transition-colors capitalize',
+                  'px-3 py-1.5 text-sm rounded-sm transition-colors capitalize',
                   selectedType === type
-                    ? 'bg-indigo-600 text-white'
-                    : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                    ? 'bg-[#E80ADE] text-white'
+                    : 'bg-[#1C1C1C] text-[#A0A0A0] hover:bg-[#2A2A2A] border border-[#2A2A2A]'
                 )}
               >
                 {type}

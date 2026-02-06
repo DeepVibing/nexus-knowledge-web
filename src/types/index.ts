@@ -10,6 +10,10 @@ export * from './source';
 export * from './chat';
 export * from './entity';
 export * from './search';
+export * from './glossary';
+export * from './insight';
+export * from './export';
+export * from './connector';
 
 // Query Key Factory
 export const kbKeys = {
@@ -56,5 +60,48 @@ export const kbKeys = {
   search: {
     results: (workspaceId: string, query: string, filters?: Record<string, unknown>) =>
       ['kb', 'workspaces', workspaceId, 'search', query, filters] as const,
+  },
+
+  // Glossary
+  glossary: {
+    all: (workspaceId: string) => ['kb', 'workspaces', workspaceId, 'glossary'] as const,
+    list: (workspaceId: string, params?: Record<string, unknown>) =>
+      [...kbKeys.glossary.all(workspaceId), 'list', params] as const,
+    detail: (workspaceId: string, termId: string) =>
+      [...kbKeys.glossary.all(workspaceId), termId] as const,
+    categories: (workspaceId: string) =>
+      [...kbKeys.glossary.all(workspaceId), 'categories'] as const,
+  },
+
+  // Insights
+  insights: {
+    all: (workspaceId: string) => ['kb', 'workspaces', workspaceId, 'insights'] as const,
+    list: (workspaceId: string, params?: Record<string, unknown>) =>
+      [...kbKeys.insights.all(workspaceId), 'list', params] as const,
+    detail: (workspaceId: string, insightId: string) =>
+      [...kbKeys.insights.all(workspaceId), insightId] as const,
+    stats: (workspaceId: string) =>
+      [...kbKeys.insights.all(workspaceId), 'stats'] as const,
+  },
+
+  // Exports
+  exports: {
+    all: (workspaceId: string) => ['kb', 'workspaces', workspaceId, 'exports'] as const,
+    list: (workspaceId: string, params?: Record<string, unknown>) =>
+      [...kbKeys.exports.all(workspaceId), 'list', params] as const,
+    job: (workspaceId: string, jobId: string) =>
+      [...kbKeys.exports.all(workspaceId), jobId] as const,
+  },
+
+  // Connectors
+  connectors: {
+    available: () => ['kb', 'connectors'] as const,
+    connections: (workspaceId: string) => ['kb', 'workspaces', workspaceId, 'connectors'] as const,
+    connectionList: (workspaceId: string, params?: Record<string, unknown>) =>
+      [...kbKeys.connectors.connections(workspaceId), 'list', params] as const,
+    connectionDetail: (workspaceId: string, connectionId: string) =>
+      [...kbKeys.connectors.connections(workspaceId), connectionId] as const,
+    resources: (workspaceId: string, connectionId: string) =>
+      [...kbKeys.connectors.connectionDetail(workspaceId, connectionId), 'resources'] as const,
   },
 } as const;

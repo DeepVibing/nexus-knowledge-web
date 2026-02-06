@@ -55,28 +55,28 @@ export function Modal({
       <div className="flex min-h-full items-center justify-center p-4">
         {/* Backdrop */}
         <div
-          className="fixed inset-0 bg-black/60 transition-opacity"
+          className="fixed inset-0 bg-black/80 transition-opacity"
           onClick={onClose}
         />
 
         {/* Modal */}
         <div
           className={cn(
-            'relative w-full bg-slate-800 rounded-xl shadow-xl',
-            'border border-slate-700',
+            'relative w-full bg-[#1C1C1C] rounded-sm shadow-xl',
+            'border border-[#2A2A2A]',
             sizes[size]
           )}
         >
           {/* Header */}
           {(title || showCloseButton) && (
-            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-700">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-[#2A2A2A]">
               {title && (
-                <h2 className="text-lg font-semibold text-white">{title}</h2>
+                <h2 className="text-lg font-medium tracking-wide text-[#F5F5F5]">{title}</h2>
               )}
               {showCloseButton && (
                 <button
                   onClick={onClose}
-                  className="text-slate-400 hover:text-white transition-colors"
+                  className="text-[#666666] hover:text-[#F5F5F5] transition-colors"
                 >
                   <X className="h-5 w-5" />
                 </button>

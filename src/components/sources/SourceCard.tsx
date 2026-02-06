@@ -30,24 +30,34 @@ export function SourceCard({ source, onSync, onDelete, onClick }: SourceCardProp
 
   return (
     <Card hover onClick={onClick} className="group relative">
+      {/* Status top-border strip */}
+      <div className={cn(
+        'absolute top-0 left-0 right-0 h-[2px]',
+        source.status === 'ready' && 'bg-emerald-500',
+        source.status === 'processing' && 'bg-[#E80ADE]',
+        source.status === 'pending' && 'bg-amber-500',
+        source.status === 'failed' && 'bg-red-500',
+        source.status === 'stale' && 'bg-amber-500',
+      )} />
+
       <div className="flex items-start gap-4">
         {/* Icon */}
-        <div className="w-10 h-10 rounded-lg bg-slate-700 flex items-center justify-center flex-shrink-0">
-          <Icon className="h-5 w-5 text-slate-400" />
+        <div className="w-10 h-10 rounded-sm bg-[#1C1C1C] border border-[#2A2A2A] flex items-center justify-center flex-shrink-0">
+          <Icon className="h-5 w-5 text-[#666666]" />
         </div>
 
         {/* Content */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <h3 className="font-medium text-white truncate">{source.name}</h3>
+            <h3 className="font-medium text-[#F5F5F5] text-sm truncate">{source.name}</h3>
             <Badge variant={statusVariants[source.status]} size="sm">
               {source.status}
             </Badge>
           </div>
 
-          <p className="text-sm text-slate-400 mb-2">{source.sourceType}</p>
+          <p className="text-sm text-[#666666] mb-2">{source.sourceType}</p>
 
-          <div className="flex items-center gap-4 text-xs text-slate-500">
+          <div className="flex items-center gap-4 text-xs text-[#666666]" style={{ fontFamily: 'var(--font-mono)' }}>
             {source.processing?.chunksCount && (
               <span>{source.processing.chunksCount} chunks</span>
             )}
@@ -76,7 +86,7 @@ export function SourceCard({ source, onSync, onDelete, onClick }: SourceCardProp
                 e.stopPropagation();
                 onSync();
               }}
-              className="p-2 text-slate-400 hover:text-white hover:bg-slate-700 rounded-lg transition-colors"
+              className="p-2 text-[#666666] hover:text-[#F5F5F5] hover:bg-[#2A2A2A] rounded-sm transition-colors"
               title="Sync"
             >
               <RefreshCw className="h-4 w-4" />
@@ -88,7 +98,7 @@ export function SourceCard({ source, onSync, onDelete, onClick }: SourceCardProp
                 e.stopPropagation();
                 onDelete();
               }}
-              className="p-2 text-slate-400 hover:text-red-400 hover:bg-slate-700 rounded-lg transition-colors"
+              className="p-2 text-[#666666] hover:text-red-400 hover:bg-[#2A2A2A] rounded-sm transition-colors"
               title="Delete"
             >
               <Trash2 className="h-4 w-4" />

@@ -62,13 +62,13 @@ export default function SettingsPage() {
 
   return (
     <div className="max-w-3xl space-y-6">
-      <h1 className="text-2xl font-bold text-white">Settings</h1>
+      <h1 className="text-2xl font-medium tracking-wide text-[#F5F5F5]">Settings</h1>
 
       {/* General Settings */}
       <Card>
         <CardHeader>
           <div className="flex items-center gap-2">
-            <Settings className="h-5 w-5 text-slate-400" />
+            <Settings className="h-5 w-5 text-[#666666]" />
             <CardTitle>General</CardTitle>
           </div>
         </CardHeader>
@@ -95,7 +95,7 @@ export default function SettingsPage() {
       <Card>
         <CardHeader>
           <div className="flex items-center gap-2">
-            <Users className="h-5 w-5 text-slate-400" />
+            <Users className="h-5 w-5 text-[#666666]" />
             <CardTitle>Members</CardTitle>
           </div>
         </CardHeader>
@@ -104,15 +104,15 @@ export default function SettingsPage() {
             {members?.map((member) => (
               <div
                 key={member.userId}
-                className="flex items-center justify-between py-2 border-b border-slate-700 last:border-0"
+                className="flex items-center justify-between py-2 border-b border-[#2A2A2A] last:border-0"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white font-medium">
+                  <div className="w-8 h-8 rounded-sm bg-[#E80ADE] flex items-center justify-center text-white font-medium text-sm">
                     {member.name.charAt(0)}
                   </div>
                   <div>
-                    <p className="font-medium text-white">{member.name}</p>
-                    <p className="text-sm text-slate-400">{member.email}</p>
+                    <p className="font-medium text-[#F5F5F5] text-sm">{member.name}</p>
+                    <p className="text-xs text-[#666666]">{member.email}</p>
                   </div>
                 </div>
                 <Badge variant="default">{member.role}</Badge>
@@ -131,7 +131,7 @@ export default function SettingsPage() {
           </div>
         </CardHeader>
         <CardContent>
-          <p className="text-slate-400 mb-4">
+          <p className="text-[#666666] mb-4 text-sm">
             Permanently delete this workspace and all of its data. This action cannot be undone.
           </p>
           <Button

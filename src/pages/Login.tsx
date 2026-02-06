@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Brain, Mail, Lock, AlertCircle } from 'lucide-react';
+import { Shield, Mail, Lock, AlertCircle } from 'lucide-react';
 import { Button } from '../components/common/Button';
 import { Input } from '../components/common/Input';
 import { useAuth } from '../contexts/AuthContext';
@@ -40,23 +40,31 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-900 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-[#0A0A0A] px-4">
       <div className="w-full max-w-md">
         {/* Logo */}
-        <div className="flex items-center justify-center gap-3 mb-8">
-          <div className="w-12 h-12 rounded-xl bg-indigo-600 flex items-center justify-center">
-            <Brain className="h-7 w-7 text-white" />
+        <div className="flex flex-col items-center gap-4 mb-8">
+          <div className="w-14 h-14 rounded-sm bg-[#E80ADE] flex items-center justify-center">
+            <Shield className="h-8 w-8 text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-white">Nexus Knowledge</h1>
+          <div className="text-center">
+            <h1 className="text-2xl font-light tracking-[0.15em] uppercase text-[#F5F5F5]" style={{ fontFamily: 'var(--font-heading)' }}>
+              Nexus Knowledge
+            </h1>
+            <p className="text-xs tracking-[0.2em] uppercase text-[#666666] mt-1" style={{ fontFamily: 'var(--font-heading)' }}>
+              Vault
+            </p>
+          </div>
+          <hr className="vault-rule w-24" />
         </div>
 
         {/* Form Card */}
-        <div className="bg-slate-800 rounded-xl border border-slate-700 p-8">
-          <h2 className="text-xl font-semibold text-white mb-2">Welcome back</h2>
-          <p className="text-slate-400 mb-6">Sign in to your account</p>
+        <div className="bg-[#141414] rounded-sm border border-[#2A2A2A] p-8">
+          <h2 className="text-lg font-medium tracking-wide text-[#F5F5F5] mb-2">Welcome back</h2>
+          <p className="text-[#666666] text-sm mb-6">Sign in to your account</p>
 
           {error && (
-            <div className="flex items-center gap-2 p-3 mb-4 bg-red-900/50 border border-red-700 rounded-lg text-red-300 text-sm">
+            <div className="flex items-center gap-2 p-3 mb-4 bg-red-950/50 border border-red-900 rounded-sm text-red-300 text-sm">
               <AlertCircle className="h-4 w-4 flex-shrink-0" />
               {error}
             </div>
@@ -88,17 +96,17 @@ export default function Login() {
         </div>
 
         {/* Register Link */}
-        <p className="text-center text-slate-400 mt-6">
+        <p className="text-center text-[#666666] mt-6 text-sm">
           Don't have an account?{' '}
-          <Link to={ROUTES.REGISTER} className="text-indigo-400 hover:text-indigo-300">
+          <Link to={ROUTES.REGISTER} className="text-[#E80ADE] hover:text-[#D000CC]">
             Sign up
           </Link>
         </p>
 
         {/* Dev Account Note */}
-        <div className="mt-6 p-4 bg-slate-800/50 rounded-lg border border-slate-700">
-          <p className="text-xs text-slate-500 text-center">
-            <strong className="text-slate-400">Dev Account:</strong>{' '}
+        <div className="mt-6 p-4 bg-[#141414]/50 rounded-sm border border-[#2A2A2A]">
+          <p className="text-xs text-[#666666] text-center" style={{ fontFamily: 'var(--font-mono)' }}>
+            <strong className="text-[#A0A0A0]">Dev Account:</strong>{' '}
             dev@deepvibe.local / Dev123!
           </p>
         </div>

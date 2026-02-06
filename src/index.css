@@ -1,27 +1,124 @@
 @import 'tailwindcss';
 
+/* ============================================================
+   Nexus Knowledge Vault - Design System
+   Based on DeepVibe brand identity (deepvibe.com)
+   Concept A: "The Vault" - Secure, Authoritative, Structured
+   ============================================================ */
+
+/* Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@200;300;400;500;600;700&family=Lexend:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
 :root {
-  --color-primary: #6366f1;
-  --color-primary-hover: #4f46e5;
-  --color-secondary: #8b5cf6;
-  --color-accent: #ec4899;
-  --color-background: #0f172a;
-  --color-surface: #1e293b;
-  --color-surface-hover: #334155;
-  --color-border: #334155;
-  --color-text: #f8fafc;
-  --color-text-muted: #94a3b8;
+  /* Vault Color Palette */
+  --color-vault-black: #0A0A0A;
+  --color-vault-surface: #141414;
+  --color-vault-elevated: #1C1C1C;
+  --color-vault-border: #2A2A2A;
+  --color-vault-border-active: #3A3A3A;
+
+  /* DeepVibe Magenta */
+  --color-magenta: #E80ADE;
+  --color-magenta-hover: #D000CC;
+  --color-magenta-glow: rgba(232, 10, 222, 0.15);
+  --color-magenta-subtle: rgba(232, 10, 222, 0.08);
+
+  /* Text */
+  --color-text: #F5F5F5;
+  --color-text-secondary: #A0A0A0;
+  --color-text-muted: #666666;
+
+  /* Status */
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
+  --color-error: #EF4444;
+  --color-info: #3B82F6;
+
+  /* Typography */
+  --font-heading: 'Oswald', sans-serif;
+  --font-body: 'Lexend', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
 }
 
 body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  background-color: var(--color-background);
+  background-color: var(--color-vault-black);
   color: var(--color-text);
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 #root {
   min-height: 100vh;
+}
+
+/* Heading font override */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+}
+
+/* Monospace for data elements */
+code, pre, .font-mono {
+  font-family: var(--font-mono);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-vault-black);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-vault-border-active);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-muted);
+}
+
+/* Selection color */
+::selection {
+  background: var(--color-magenta-glow);
+  color: var(--color-text);
+}
+
+/* Vault slash divider utility */
+.vault-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--color-text-muted);
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.vault-divider::before,
+.vault-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--color-vault-border);
+}
+
+/* Magenta accent rule */
+.vault-rule {
+  border: none;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-magenta),
+    transparent
+  );
+  opacity: 0.4;
 }

@@ -18,6 +18,8 @@ const WorkspaceList = lazy(() => import('./pages/WorkspaceList'));
 const ChatPage = lazy(() => import('./pages/ChatPage'));
 const SourcesPage = lazy(() => import('./pages/SourcesPage'));
 const EntitiesPage = lazy(() => import('./pages/EntitiesPage'));
+const GlossaryPage = lazy(() => import('./pages/GlossaryPage'));
+const InsightsPage = lazy(() => import('./pages/InsightsPage'));
 const SettingsPage = lazy(() => import('./pages/SettingsPage'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 
@@ -80,8 +82,8 @@ function AppRoutes() {
               <Route path="chat/:conversationId" element={<ChatPage />} />
               <Route path="sources" element={<SourcesPage />} />
               <Route path="entities" element={<EntitiesPage />} />
-              <Route path="glossary" element={<EntitiesPage />} />
-              <Route path="insights" element={<SourcesPage />} />
+              <Route path="glossary" element={<GlossaryPage />} />
+              <Route path="insights" element={<InsightsPage />} />
               <Route path="settings" element={<SettingsPage />} />
             </Route>
           </Route>

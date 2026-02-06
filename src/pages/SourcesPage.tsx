@@ -23,24 +23,26 @@ export default function SourcesPage() {
   const { success, error: showError } = useToast();
 
   const handleUpload = async (file: File, name?: string) => {
-    if (!workspaceId) return;
+    if (!workspaceId) return false;
     try {
       await uploadSource.mutateAsync({ workspaceId, file, name });
       success('Source uploaded successfully');
+      return true;
     } catch {
       showError('Failed to upload source');
-      throw new Error('Upload failed');
+      return false;
     }
   };
 
   const handleAddUrl = async (url: string, name?: string) => {
-    if (!workspaceId) return;
+    if (!workspaceId) return false;
     try {
       await addSourceUrl.mutateAsync({ workspaceId, data: { url, name } });
       success('URL added successfully');
+      return true;
     } catch {
       showError('Failed to add URL');
-      throw new Error('Add URL failed');
+      return false;
     }
   };
 
@@ -75,7 +77,7 @@ export default function SourcesPage() {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-white">Sources</h1>
+        <h1 className="text-2xl font-medium tracking-wide text-[#F5F5F5]">Sources</h1>
         <Button onClick={() => setShowUploadModal(true)} leftIcon={<Plus className="h-4 w-4" />}>
           Add Source
         </Button>

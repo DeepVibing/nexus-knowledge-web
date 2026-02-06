@@ -8,8 +8,8 @@ import { cn } from '../../lib/utils';
 interface UploadSourceModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onUpload: (file: File, name?: string) => Promise<void>;
-  onAddUrl: (url: string, name?: string) => Promise<void>;
+  onUpload: (file: File, name?: string) => Promise<boolean>;
+  onAddUrl: (url: string, name?: string) => Promise<boolean>;
 }
 
 type TabType = 'upload' | 'url';
@@ -52,12 +52,15 @@ export function UploadSourceModal({
   const handleSubmit = async () => {
     setIsLoading(true);
     try {
+      let ok = false;
       if (activeTab === 'upload' && file) {
-        await onUpload(file, name || undefined);
+        ok = await onUpload(file, name || undefined);
       } else if (activeTab === 'url' && url) {
-        await onAddUrl(url, name || undefined);
+        ok = await onAddUrl(url, name || undefined);
       }
-      handleClose();
+      if (ok) {
+        handleClose();
+      }
     } finally {
       setIsLoading(false);
     }
@@ -81,10 +84,10 @@ export function UploadSourceModal({
         <button
           onClick={() => setActiveTab('upload')}
           className={cn(
-            'flex items-center gap-2 px-4 py-2 rounded-lg transition-colors',
+            'flex items-center gap-2 px-4 py-2 rounded-sm transition-colors text-sm',
             activeTab === 'upload'
-              ? 'bg-indigo-600 text-white'
-              : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+              ? 'bg-[#E80ADE] text-white'
+              : 'bg-[#1C1C1C] text-[#A0A0A0] hover:bg-[#2A2A2A]'
           )}
         >
           <Upload className="h-4 w-4" />
@@ -93,10 +96,10 @@ export function UploadSourceModal({
         <button
           onClick={() => setActiveTab('url')}
           className={cn(
-            'flex items-center gap-2 px-4 py-2 rounded-lg transition-colors',
+            'flex items-center gap-2 px-4 py-2 rounded-sm transition-colors text-sm',
             activeTab === 'url'
-              ? 'bg-indigo-600 text-white'
-              : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+              ? 'bg-[#E80ADE] text-white'
+              : 'bg-[#1C1C1C] text-[#A0A0A0] hover:bg-[#2A2A2A]'
           )}
         >
           <LinkIcon className="h-4 w-4" />
@@ -115,34 +118,34 @@ export function UploadSourceModal({
             }}
             onDragLeave={() => setIsDragging(false)}
             className={cn(
-              'border-2 border-dashed rounded-xl p-8 text-center transition-colors',
+              'border-2 border-dashed rounded-sm p-8 text-center transition-colors',
               isDragging
-                ? 'border-indigo-500 bg-indigo-500/10'
-                : 'border-slate-700 hover:border-slate-600'
+                ? 'border-[#E80ADE] bg-[rgba(232,10,222,0.08)]'
+                : 'border-[#2A2A2A] hover:border-[#3A3A3A]'
             )}
           >
             {file ? (
               <div className="flex items-center justify-center gap-3">
-                <FileText className="h-8 w-8 text-indigo-400" />
+                <FileText className="h-8 w-8 text-[#E80ADE]" />
                 <div className="text-left">
-                  <p className="font-medium text-white">{file.name}</p>
-                  <p className="text-sm text-slate-400">
+                  <p className="font-medium text-[#F5F5F5]">{file.name}</p>
+                  <p className="text-sm text-[#666666]" style={{ fontFamily: 'var(--font-mono)' }}>
                     {(file.size / 1024 / 1024).toFixed(2)} MB
                   </p>
                 </div>
                 <button
                   onClick={() => setFile(null)}
-                  className="p-1 text-slate-400 hover:text-white"
+                  className="p-1 text-[#666666] hover:text-[#F5F5F5]"
                 >
                   <X className="h-5 w-5" />
                 </button>
               </div>
             ) : (
               <>
-                <Upload className="h-10 w-10 text-slate-500 mx-auto mb-3" />
-                <p className="text-slate-300 mb-1">
+                <Upload className="h-10 w-10 text-[#666666] mx-auto mb-3" />
+                <p className="text-[#A0A0A0] mb-1">
                   Drop a file here or{' '}
-                  <label className="text-indigo-400 hover:text-indigo-300 cursor-pointer">
+                  <label className="text-[#E80ADE] hover:text-[#D000CC] cursor-pointer">
                     browse
                     <input
                       type="file"
@@ -152,7 +155,7 @@ export function UploadSourceModal({
                     />
                   </label>
                 </p>
-                <p className="text-sm text-slate-500">
+                <p className="text-sm text-[#666666]" style={{ fontFamily: 'var(--font-mono)' }}>
                   PDF, TXT, MD, DOC, DOCX (max 100MB)
                 </p>
               </>
@@ -184,7 +187,7 @@ export function UploadSourceModal({
       </div>
 
       {/* Actions */}
-      <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-slate-700">
+      <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-[#2A2A2A]">
         <Button variant="ghost" onClick={handleClose}>
           Cancel
         </Button>

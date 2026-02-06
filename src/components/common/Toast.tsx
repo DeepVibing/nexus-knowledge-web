@@ -11,10 +11,10 @@ const icons: Record<ToastVariant, typeof CheckCircle> = {
 };
 
 const variants: Record<ToastVariant, string> = {
-  success: 'bg-green-900/90 border-green-700 text-green-100',
-  error: 'bg-red-900/90 border-red-700 text-red-100',
-  warning: 'bg-yellow-900/90 border-yellow-700 text-yellow-100',
-  info: 'bg-blue-900/90 border-blue-700 text-blue-100',
+  success: 'bg-[#141414] border-emerald-800 text-emerald-300',
+  error: 'bg-[#141414] border-red-800 text-red-300',
+  warning: 'bg-[#141414] border-amber-800 text-amber-300',
+  info: 'bg-[#141414] border-[rgba(232,10,222,0.3)] text-[#E80ADE]',
 };
 
 function ToastItem({ toast, onRemove }: { toast: ToastType; onRemove: () => void }) {
@@ -23,7 +23,7 @@ function ToastItem({ toast, onRemove }: { toast: ToastType; onRemove: () => void
   return (
     <div
       className={cn(
-        'flex items-center gap-3 px-4 py-3 rounded-lg border shadow-lg',
+        'flex items-center gap-3 px-4 py-3 rounded-sm border shadow-lg',
         'animate-in slide-in-from-top-2 fade-in duration-200',
         variants[toast.type]
       )}
