@@ -64,6 +64,23 @@
   - kbKeys factory updated with graph (6 keys) and reports (4 keys) entries
   - 12 pages with lazy loading, 36+ TanStack Query hooks total
   - Build verified: 0 errors, ~178KB gzipped
+- [x] **Phase 7b + Phase 8 Frontend Integration** - Infographics & Audio Intelligence
+  - **Phase 7b (Infographics via fal.ai):**
+    - Added 'infographic' to ReportType union
+    - Extended ReportOptionsDto with imageModel, imageStyle, imageWidth, imageHeight
+    - Added IMAGE_MODELS metadata array (Nano Banana Pro, Recraft V3, FLUX.2)
+    - Added infographic entry to REPORT_TYPES gallery
+    - ReportsPage: Image icon for infographic type, visual settings panel in GenerateReportModal (model selector, style prompt) shown when infographic selected
+    - Gallery grid updated to 7-column layout for new type
+  - **Phase 8 (Audio Intelligence):**
+    - Added 'audio' to SourceType, 'transcribing' to SourceStatus
+    - Added TranscribeAudioRequestDto, AudioTranscriptionResponseDto, AudioTranscriptResponseDto, TranscriptChunkDto types
+    - Added transcribe/getTranscript methods to sourcesApi service
+    - Added useTranscribeSource/useSourceTranscript hooks
+    - Added ACCEPTED_AUDIO_TYPES (13 MIME types) and MAX_AUDIO_SIZE (100MB) to FILE_UPLOAD config
+    - SourceCard: Headphones icon for audio, Image icon for image, 'transcribing' status strip
+  - 12 pages with lazy loading, 40+ TanStack Query hooks total
+  - Build verified: 0 errors, ~180KB gzipped
 
 ---
 
@@ -73,7 +90,6 @@
 - [ ] Extend UploadSourceModal to accept image files (preview, drag-drop)
 - [ ] SourceCard image variant (thumbnail replacing type icon, "Image" badge)
 - [ ] ImageSourceDetail component (full image + extracted text + entities panel)
-- [ ] Camera icon for image source type in SourceCard
 - [ ] Analysis progress indicator (analyzing → ready status transition)
 
 ---
@@ -94,22 +110,14 @@
 **Frontend (remaining):**
 - [ ] Report preview/viewer (render contentHtml in modal)
 - [ ] Source/entity/date range filters in GenerateReportModal
-- [ ] Visual mode selector (Standard / Creative / Illustrated) — pending fal.ai backend
 - [ ] Report thumbnail previews on cards
 
 ---
 
-## Phase 8: Audio Intelligence
+## Phase 8 Remaining: Audio Intelligence UI Polish
 
-**Backend (API team):**
-- [ ] Extend source upload to accept audio/* content types (MP3, WAV, M4A, OGG, FLAC, max 100MB)
-- [ ] Integrate OpenAI gpt-4o-mini-transcribe for transcription ($0.006/min)
-- [ ] Integrate Pyannote 3.1 for speaker diarization
-- [ ] Audio processing pipeline: transcription → diarization → chunking → embedding → entity extraction
-- [ ] Store transcript with speaker labels + timestamps
-
-**Frontend:**
-- [ ] Extend UploadSourceModal to accept audio files
+**Frontend (remaining):**
+- [ ] Extend UploadSourceModal to accept audio files (preview, drag-drop)
 - [ ] Audio player component (embedded in source detail)
 - [ ] Transcript view with speaker labels and timestamps
 - [ ] Timestamp-linked citations (click citation → jump to audio position)

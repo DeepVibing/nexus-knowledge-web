@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { Upload, X, FileText, Link as LinkIcon } from 'lucide-react';
 import { Modal } from '../common/Modal';
 import { Button } from '../common/Button';
@@ -26,6 +26,29 @@ export function UploadSourceModal({
   const [name, setName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const prevPreviewRef = useRef<string | null>(null);
+
+  // Cleanup object URL on file change and unmount
+  useEffect(() => {
+    if (prevPreviewRef.current) {
+      URL.revokeObjectURL(prevPreviewRef.current);
+    }
+    if (file && file.type.startsWith('image/')) {
+      const objectUrl = URL.createObjectURL(file);
+      setPreviewUrl(objectUrl);
+      prevPreviewRef.current = objectUrl;
+    } else {
+      setPreviewUrl(null);
+      prevPreviewRef.current = null;
+    }
+    return () => {
+      if (prevPreviewRef.current) {
+        URL.revokeObjectURL(prevPreviewRef.current);
+        prevPreviewRef.current = null;
+      }
+    };
+  }, [file]);
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -126,7 +149,15 @@ export function UploadSourceModal({
           >
             {file ? (
               <div className="flex items-center justify-center gap-3">
-                <FileText className="h-8 w-8 text-[#E80ADE]" />
+                {previewUrl ? (
+                  <img
+                    src={previewUrl}
+                    alt={file.name}
+                    className="h-16 w-16 object-cover rounded-sm border border-[#2A2A2A]"
+                  />
+                ) : (
+                  <FileText className="h-8 w-8 text-[#E80ADE]" />
+                )}
                 <div className="text-left">
                   <p className="font-medium text-[#F5F5F5]">{file.name}</p>
                   <p className="text-sm text-[#666666]" style={{ fontFamily: 'var(--font-mono)' }}>
@@ -151,12 +182,12 @@ export function UploadSourceModal({
                       type="file"
                       className="hidden"
                       onChange={handleFileSelect}
-                      accept=".pdf,.txt,.md,.doc,.docx"
+                      accept=".pdf,.txt,.md,.doc,.docx,.png,.jpg,.jpeg,.webp,.gif,.bmp"
                     />
                   </label>
                 </p>
                 <p className="text-sm text-[#666666]" style={{ fontFamily: 'var(--font-mono)' }}>
-                  PDF, TXT, MD, DOC, DOCX (max 100MB)
+                  PDF, TXT, MD, DOC, DOCX, PNG, JPG, WEBP, GIF, BMP (max 100MB)
                 </p>
               </>
             )}

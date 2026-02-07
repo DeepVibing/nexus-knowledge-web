@@ -12,6 +12,9 @@ import type {
   AddSourceConnectRequest,
   SyncSourceRequest,
   VisualAnalysisResponseDto,
+  TranscribeAudioRequestDto,
+  AudioTranscriptionResponseDto,
+  AudioTranscriptResponseDto,
 } from '../types';
 
 const getBaseUrl = (workspaceId: string) => `/api/v1/kb/workspaces/${workspaceId}/sources`;
@@ -75,6 +78,28 @@ export const sourcesApi = {
   getAnalysis: async (workspaceId: string, sourceId: string): Promise<VisualAnalysisResponseDto> => {
     return apiClient.getRaw<VisualAnalysisResponseDto>(
       `${getBaseUrl(workspaceId)}/${sourceId}/analysis`
+    );
+  },
+
+  /** POST /sources/{sourceId}/transcribe — trigger audio transcription */
+  transcribe: async (
+    workspaceId: string,
+    sourceId: string,
+    data?: TranscribeAudioRequestDto
+  ): Promise<AudioTranscriptionResponseDto> => {
+    return apiClient.postRaw<AudioTranscriptionResponseDto>(
+      `${getBaseUrl(workspaceId)}/${sourceId}/transcribe`,
+      data ?? {}
+    );
+  },
+
+  /** GET /sources/{sourceId}/transcript — get audio transcript */
+  getTranscript: async (
+    workspaceId: string,
+    sourceId: string
+  ): Promise<AudioTranscriptResponseDto> => {
+    return apiClient.getRaw<AudioTranscriptResponseDto>(
+      `${getBaseUrl(workspaceId)}/${sourceId}/transcript`
     );
   },
 };

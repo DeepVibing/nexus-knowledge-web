@@ -7,8 +7,10 @@ import { PageLoader } from '../components/common/Spinner';
 import { EmptyState } from '../components/common/EmptyState';
 import { SourceCard } from '../components/sources/SourceCard';
 import { UploadSourceModal } from '../components/sources/UploadSourceModal';
-import { useSources, useUploadSource, useAddSourceUrl, useDeleteSource, useSyncSource } from '../hooks/useSources';
+import { SourceDetailModal } from '../components/sources/SourceDetailModal';
+import { useSources, useUploadSource, useAddSourceUrl, useDeleteSource, useSyncSource, useAnalyzeSource } from '../hooks/useSources';
 import { useToast } from '../contexts/ToastContext';
+import type { SourceDto } from '../types';
 
 export default function SourcesPage() {
   const { workspaceId } = useParams<{ workspaceId: string }>();
@@ -16,12 +18,15 @@ export default function SourcesPage() {
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [deletingSourceId, setDeletingSourceId] = useState<string | null>(null);
   const [syncingSourceId, setSyncingSourceId] = useState<string | null>(null);
+  const [analyzingSourceId, setAnalyzingSourceId] = useState<string | null>(null);
+  const [selectedSource, setSelectedSource] = useState<SourceDto | null>(null);
 
   const { data, isLoading } = useSources(workspaceId, { search: search || undefined });
   const uploadSource = useUploadSource();
   const addSourceUrl = useAddSourceUrl();
   const deleteSource = useDeleteSource();
   const syncSource = useSyncSource();
+  const analyzeSource = useAnalyzeSource();
   const { success, error: showError } = useToast();
 
   const handleUpload = async (file: File, name?: string) => {
@@ -75,6 +80,19 @@ export default function SourcesPage() {
     }
   };
 
+  const handleAnalyze = async (sourceId: string) => {
+    if (!workspaceId) return;
+    setAnalyzingSourceId(sourceId);
+    try {
+      await analyzeSource.mutateAsync({ workspaceId, sourceId });
+      success('Analysis started');
+    } catch {
+      showError('Failed to start analysis');
+    } finally {
+      setAnalyzingSourceId(null);
+    }
+  };
+
   if (isLoading) {
     return <PageLoader />;
   }
@@ -119,10 +137,13 @@ export default function SourcesPage() {
             <SourceCard
               key={source.id}
               source={source}
+              onClick={() => setSelectedSource(source)}
               onSync={() => handleSync(source.id)}
               onDelete={() => handleDelete(source.id)}
+              onAnalyze={() => handleAnalyze(source.id)}
               isSyncing={syncingSourceId === source.id}
               isDeleting={deletingSourceId === source.id}
+              isAnalyzing={analyzingSourceId === source.id}
             />
           ))}
         </div>
@@ -135,6 +156,16 @@ export default function SourcesPage() {
         onUpload={handleUpload}
         onAddUrl={handleAddUrl}
       />
+
+      {/* Source Detail Modal */}
+      {workspaceId && (
+        <SourceDetailModal
+          isOpen={!!selectedSource}
+          onClose={() => setSelectedSource(null)}
+          source={selectedSource}
+          workspaceId={workspaceId}
+        />
+      )}
     </div>
   );
 }

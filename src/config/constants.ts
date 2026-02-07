@@ -66,6 +66,22 @@ export const FILE_UPLOAD = {
     'image/gif',
     'image/bmp',
   ],
+  MAX_AUDIO_SIZE: 100 * 1024 * 1024, // 100MB
+  ACCEPTED_AUDIO_TYPES: [
+    'audio/mpeg',
+    'audio/mp3',
+    'audio/wav',
+    'audio/x-wav',
+    'audio/mp4',
+    'audio/x-m4a',
+    'audio/ogg',
+    'audio/flac',
+    'audio/x-flac',
+    'audio/webm',
+    'audio/aac',
+    'audio/x-aiff',
+    'audio/amr',
+  ],
 } as const;
 
 export const TOAST_DURATION = {

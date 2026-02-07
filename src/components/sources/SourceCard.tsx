@@ -1,4 +1,4 @@
-import { FileText, Globe, MessageSquare, RefreshCw, Trash2, Clock, Loader2 } from 'lucide-react';
+import { FileText, Globe, MessageSquare, RefreshCw, Trash2, Clock, Loader2, Image, Headphones, Sparkles } from 'lucide-react';
 import { Badge } from '../common/Badge';
 import { Card } from '../common/Card';
 import type { SourceDto, SourceStatus } from '../../types';
@@ -9,14 +9,17 @@ interface SourceCardProps {
   onSync?: () => void;
   onDelete?: () => void;
   onClick?: () => void;
+  onAnalyze?: () => void;
   isSyncing?: boolean;
   isDeleting?: boolean;
+  isAnalyzing?: boolean;
 }
 
 const statusVariants: Record<SourceStatus, 'default' | 'success' | 'warning' | 'error' | 'info'> = {
   pending: 'warning',
   processing: 'info',
   analyzing: 'info',
+  transcribing: 'info',
   ready: 'success',
   failed: 'error',
   stale: 'warning',
@@ -26,9 +29,11 @@ const typeIcons: Record<string, typeof FileText> = {
   document: FileText,
   web_page: Globe,
   slack_channel: MessageSquare,
+  image: Image,
+  audio: Headphones,
 };
 
-export function SourceCard({ source, onSync, onDelete, onClick, isSyncing, isDeleting }: SourceCardProps) {
+export function SourceCard({ source, onSync, onDelete, onClick, onAnalyze, isSyncing, isDeleting, isAnalyzing }: SourceCardProps) {
   const Icon = typeIcons[source.sourceType] || FileText;
 
   return (
@@ -38,6 +43,7 @@ export function SourceCard({ source, onSync, onDelete, onClick, isSyncing, isDel
         'absolute top-0 left-0 right-0 h-[2px]',
         source.status === 'ready' && 'bg-emerald-500',
         source.status === 'processing' && 'bg-[#E80ADE]',
+        source.status === 'transcribing' && 'bg-[#E80ADE]',
         source.status === 'pending' && 'bg-amber-500',
         source.status === 'failed' && 'bg-red-500',
         source.status === 'stale' && 'bg-amber-500',
@@ -53,7 +59,11 @@ export function SourceCard({ source, onSync, onDelete, onClick, isSyncing, isDel
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
             <h3 className="font-medium text-[#F5F5F5] text-sm truncate">{source.name}</h3>
-            <Badge variant={statusVariants[source.status]} size="sm">
+            <Badge
+              variant={statusVariants[source.status]}
+              size="sm"
+              className={source.status === 'analyzing' ? 'animate-pulse' : ''}
+            >
               {source.status}
             </Badge>
           </div>
@@ -83,6 +93,24 @@ export function SourceCard({ source, onSync, onDelete, onClick, isSyncing, isDel
             'absolute top-4 right-4'
           )}
         >
+          {onAnalyze && source.sourceType === 'image' && source.status === 'ready' && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onAnalyze();
+              }}
+              disabled={isAnalyzing}
+              className={cn(
+                'p-2 rounded-sm transition-colors',
+                isAnalyzing
+                  ? 'text-[#E80ADE] opacity-70 cursor-not-allowed'
+                  : 'text-[#666666] hover:text-[#E80ADE] hover:bg-[#2A2A2A]'
+              )}
+              title="Analyze Image"
+            >
+              {isAnalyzing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+            </button>
+          )}
           {onSync && source.origin.connector && (
             <button
               onClick={(e) => {

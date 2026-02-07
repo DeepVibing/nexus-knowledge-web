@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import {
   Plus,
@@ -11,9 +11,8 @@ import {
   XCircle,
   FileText,
   Network,
-  BookOpen,
-  Lightbulb,
-  BookA,
+  GitCompareArrows,
+  Image,
 } from 'lucide-react';
 import { Button } from '../components/common/Button';
 import { Modal } from '../components/common/Modal';
@@ -32,15 +31,14 @@ import type {
   CreateReportRequest,
   ReportSummaryDto,
 } from '../types';
-import { REPORT_TYPES } from '../types/report';
+import { REPORT_TYPES, IMAGE_MODELS } from '../types/report';
 
 const REPORT_TYPE_ICONS: Record<string, React.ReactNode> = {
-  executive_summary: <FileText className="h-5 w-5" />,
-  entity_map: <Network className="h-5 w-5" />,
-  source_digest: <BookOpen className="h-5 w-5" />,
-  insights_report: <Lightbulb className="h-5 w-5" />,
-  glossary_reference: <BookA className="h-5 w-5" />,
-  knowledge_timeline: <Clock className="h-5 w-5" />,
+  Summary: <FileText className="h-5 w-5" />,
+  EntityMap: <Network className="h-5 w-5" />,
+  Timeline: <Clock className="h-5 w-5" />,
+  Comparison: <GitCompareArrows className="h-5 w-5" />,
+  Infographic: <Image className="h-5 w-5" />,
 };
 
 const STATUS_CONFIG: Record<string, { icon: React.ReactNode; color: string; label: string }> = {
@@ -149,6 +147,10 @@ function GenerateReportModal({
   const [selectedType, setSelectedType] = useState<ReportType | null>(null);
   const [title, setTitle] = useState('');
   const [focusTopic, setFocusTopic] = useState('');
+  const [imageModel, setImageModel] = useState(IMAGE_MODELS[0].id);
+  const [imageStyle, setImageStyle] = useState('');
+
+  const isInfographic = selectedType === 'Infographic';
 
   const handleSubmit = () => {
     if (!selectedType) return;
@@ -159,6 +161,12 @@ function GenerateReportModal({
         focusTopic: focusTopic.trim() || undefined,
         includeEntities: true,
         includeInsights: true,
+        ...(isInfographic && {
+          imageModel,
+          imageStyle: imageStyle.trim() || undefined,
+          imageWidth: 1024,
+          imageHeight: 1024,
+        }),
       },
     });
   };
@@ -224,6 +232,44 @@ function GenerateReportModal({
           />
         </div>
 
+        {/* Infographic Visual Settings */}
+        {isInfographic && (
+          <div className="space-y-3 p-3 bg-[#0A0A0A] border border-[#2A2A2A] rounded-sm">
+            <p className="text-xs font-semibold text-[#E80ADE] uppercase" style={{ fontFamily: 'var(--font-heading)' }}>
+              Visual Settings
+            </p>
+            <div>
+              <label className="block text-xs text-[#666666] mb-1.5">Image Model</label>
+              <div className="space-y-1.5">
+                {IMAGE_MODELS.map((model) => (
+                  <button
+                    key={model.id}
+                    onClick={() => setImageModel(model.id)}
+                    className={`w-full flex items-center gap-2 px-3 py-2 rounded-sm border text-left text-xs transition-all ${
+                      imageModel === model.id
+                        ? 'border-[#E80ADE] bg-[rgba(232,10,222,0.08)] text-[#F5F5F5]'
+                        : 'border-[#2A2A2A] text-[#666666] hover:border-[#3A3A3A]'
+                    }`}
+                  >
+                    <span className="font-medium">{model.label}</span>
+                    <span className="text-[10px] opacity-70">{model.description}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div>
+              <label className="block text-xs text-[#666666] mb-1.5">Style Prompt (optional)</label>
+              <input
+                type="text"
+                value={imageStyle}
+                onChange={(e) => setImageStyle(e.target.value)}
+                placeholder="e.g., modern minimalist, corporate blue"
+                className="w-full px-3 py-2 bg-[#141414] border border-[#2A2A2A] rounded-sm text-sm text-[#F5F5F5] placeholder-[#666666] focus:outline-none focus:ring-2 focus:ring-[#E80ADE] focus:border-transparent"
+              />
+            </div>
+          </div>
+        )}
+
         {/* Actions */}
         <div className="flex justify-end gap-2 pt-2">
           <Button variant="ghost" onClick={onClose}>
@@ -234,7 +280,7 @@ function GenerateReportModal({
             disabled={!selectedType}
             isLoading={isGenerating}
           >
-            Generate Report
+            {isInfographic ? 'Generate Infographic' : 'Generate Report'}
           </Button>
         </div>
       </div>
@@ -254,15 +300,17 @@ export default function ReportsPage() {
   const { data: jobStatus } = useReportJobStatus(workspaceId, activeJobId ?? undefined);
   const { success, error: showError } = useToast();
 
-  // Clear job when completed
-  if (jobStatus?.status === 'completed' && activeJobId) {
-    setActiveJobId(null);
-    success('Report generated successfully');
-  }
-  if (jobStatus?.status === 'failed' && activeJobId) {
-    setActiveJobId(null);
-    showError('Report generation failed');
-  }
+  // Clear job when completed/failed (in useEffect to avoid setState during render)
+  useEffect(() => {
+    if (!activeJobId || !jobStatus) return;
+    if (jobStatus.status === 'completed') {
+      setActiveJobId(null);
+      success('Report generated successfully');
+    } else if (jobStatus.status === 'failed') {
+      setActiveJobId(null);
+      showError('Report generation failed');
+    }
+  }, [activeJobId, jobStatus?.status]);
 
   const handleGenerate = async (reqData: CreateReportRequest) => {
     if (!workspaceId) return;
@@ -326,7 +374,7 @@ export default function ReportsPage() {
         <h2 className="text-xs font-semibold tracking-[0.15em] uppercase text-[#666666] mb-3" style={{ fontFamily: 'var(--font-heading)' }}>
           Report Types
         </h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
           {REPORT_TYPES.map((rt) => (
             <button
               key={rt.type}

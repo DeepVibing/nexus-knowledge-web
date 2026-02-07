@@ -10,6 +10,7 @@ import type {
   AddSourceUrlRequest,
   AddSourceConnectRequest,
   SyncSourceRequest,
+  TranscribeAudioRequestDto,
 } from '../types';
 
 /**
@@ -169,6 +170,40 @@ export function useSourceAnalysis(workspaceId: string | undefined, sourceId: str
   return useQuery({
     queryKey: [...kbKeys.sources.detail(workspaceId ?? '', sourceId ?? ''), 'analysis'] as const,
     queryFn: () => sourcesApi.getAnalysis(workspaceId!, sourceId!),
+    enabled: !!workspaceId && !!sourceId,
+    staleTime: 1000 * 60 * 5,
+  });
+}
+
+/**
+ * Trigger audio transcription on a source
+ */
+export function useTranscribeSource() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      workspaceId,
+      sourceId,
+      data,
+    }: {
+      workspaceId: string;
+      sourceId: string;
+      data?: TranscribeAudioRequestDto;
+    }) => sourcesApi.transcribe(workspaceId, sourceId, data),
+    onSuccess: (_, { workspaceId, sourceId }) => {
+      queryClient.invalidateQueries({ queryKey: kbKeys.sources.detail(workspaceId, sourceId) });
+    },
+  });
+}
+
+/**
+ * Get audio transcript for a source
+ */
+export function useSourceTranscript(workspaceId: string | undefined, sourceId: string | undefined) {
+  return useQuery({
+    queryKey: [...kbKeys.sources.detail(workspaceId ?? '', sourceId ?? ''), 'transcript'] as const,
+    queryFn: () => sourcesApi.getTranscript(workspaceId!, sourceId!),
     enabled: !!workspaceId && !!sourceId,
     staleTime: 1000 * 60 * 5,
   });

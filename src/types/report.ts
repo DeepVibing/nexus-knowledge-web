@@ -4,12 +4,11 @@
  */
 
 export type ReportType =
-  | 'executive_summary'
-  | 'entity_map'
-  | 'source_digest'
-  | 'insights_report'
-  | 'glossary_reference'
-  | 'knowledge_timeline';
+  | 'Summary'
+  | 'EntityMap'
+  | 'Timeline'
+  | 'Comparison'
+  | 'Infographic';
 
 export type ReportStatus =
   | 'pending'
@@ -26,6 +25,10 @@ export interface ReportOptionsDto {
   includeEntities?: boolean;
   includeInsights?: boolean;
   maxSources?: number;
+  imageModel?: string;
+  imageStyle?: string;
+  imageWidth?: number;
+  imageHeight?: number;
 }
 
 export interface CreateReportRequest {
@@ -103,39 +106,59 @@ export interface ReportTypeInfo {
 
 export const REPORT_TYPES: ReportTypeInfo[] = [
   {
-    type: 'executive_summary',
+    type: 'Summary',
     label: 'Executive Summary',
     description: 'High-level overview of your knowledge base with key findings and insights',
     icon: 'FileText',
   },
   {
-    type: 'entity_map',
+    type: 'EntityMap',
     label: 'Entity Map',
     description: 'Visual map of all entities and their relationships across sources',
     icon: 'Network',
   },
   {
-    type: 'source_digest',
-    label: 'Source Digest',
-    description: 'Comprehensive digest summarizing all ingested sources',
-    icon: 'BookOpen',
-  },
-  {
-    type: 'insights_report',
-    label: 'Insights Report',
-    description: 'Detailed report of decisions, action items, and findings',
-    icon: 'Lightbulb',
-  },
-  {
-    type: 'glossary_reference',
-    label: 'Glossary Reference',
-    description: 'Formatted glossary of all terms with definitions and context',
-    icon: 'BookA',
-  },
-  {
-    type: 'knowledge_timeline',
-    label: 'Knowledge Timeline',
-    description: 'Chronological timeline of knowledge evolution in your workspace',
+    type: 'Timeline',
+    label: 'Timeline',
+    description: 'Chronological narrative of knowledge evolution in your workspace',
     icon: 'Clock',
+  },
+  {
+    type: 'Comparison',
+    label: 'Comparison',
+    description: 'Cross-source comparison report (requires 2+ selected sources)',
+    icon: 'GitCompareArrows',
+  },
+  {
+    type: 'Infographic',
+    label: 'Infographic',
+    description: 'AI-generated visual infographic summarizing key data and insights',
+    icon: 'Image',
+  },
+];
+
+// --- Image Generation Models (for infographic reports) ---
+
+export interface ImageModelInfo {
+  id: string;
+  label: string;
+  description: string;
+}
+
+export const IMAGE_MODELS: ImageModelInfo[] = [
+  {
+    id: 'fal-ai/nano-banana-pro',
+    label: 'Nano Banana Pro',
+    description: 'Fast generation, balanced quality ($0.15/img)',
+  },
+  {
+    id: 'fal-ai/recraft-v3',
+    label: 'Recraft V3',
+    description: 'SVG-capable, precise layouts ($0.04/img)',
+  },
+  {
+    id: 'fal-ai/flux/dev',
+    label: 'FLUX.2',
+    description: 'High fidelity photorealistic output ($0.05/img)',
   },
 ];

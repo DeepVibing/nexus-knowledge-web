@@ -13,12 +13,14 @@ export type SourceType =
   | 'cms_content'
   | 'obsidian_vault'
   | 'manual_entry'
-  | 'image';
+  | 'image'
+  | 'audio';
 
 export type SourceStatus =
   | 'pending'
   | 'processing'
   | 'analyzing'
+  | 'transcribing'
   | 'ready'
   | 'failed'
   | 'stale';
@@ -165,4 +167,33 @@ export interface VisualAnalysisResponseDto {
   entities?: DetectedEntityDto[];
   metadata?: ImageMetadataDto;
   error?: string;
+}
+
+// --- Audio Intelligence Types ---
+
+export interface TranscribeAudioRequestDto {
+  language?: string;
+  prompt?: string;
+}
+
+export interface AudioTranscriptionResponseDto {
+  status: string;
+  chunksCreated: number;
+  language?: string;
+  durationSeconds?: number;
+  error?: string;
+}
+
+export interface TranscriptChunkDto {
+  text?: string;
+  position: number;
+  timestampStartMs?: number;
+  timestampEndMs?: number;
+}
+
+export interface AudioTranscriptResponseDto {
+  fullText?: string;
+  language?: string;
+  durationSeconds?: number;
+  chunks?: TranscriptChunkDto[];
 }
