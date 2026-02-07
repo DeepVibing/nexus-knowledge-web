@@ -33,6 +33,7 @@ export default function InsightsPage() {
   const [statusFilter, setStatusFilter] = useState<InsightStatus | undefined>();
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [editInsight, setEditInsight] = useState<InsightDto | null>(null);
+  const [deletingInsightId, setDeletingInsightId] = useState<string | null>(null);
 
   const { data, isLoading } = useInsights(workspaceId, {
     search: search || undefined,
@@ -76,11 +77,14 @@ export default function InsightsPage() {
   const handleDelete = async (insightId: string) => {
     if (!workspaceId) return;
     if (!confirm('Are you sure you want to delete this insight?')) return;
+    setDeletingInsightId(insightId);
     try {
       await deleteInsight.mutateAsync({ workspaceId, insightId });
       success('Insight deleted');
     } catch {
       showError('Failed to delete insight');
+    } finally {
+      setDeletingInsightId(null);
     }
   };
 
@@ -152,6 +156,7 @@ export default function InsightsPage() {
               insight={insight}
               onEdit={() => setEditInsight(insight)}
               onDelete={() => handleDelete(insight.id)}
+              isDeleting={deletingInsightId === insight.id}
             />
           ))}
         </div>

@@ -1,7 +1,7 @@
 # Knowledge Base Tool - API Requirements
 
-**Version:** 1.0
-**Date:** February 4, 2026
+**Version:** 2.0
+**Date:** February 6, 2026
 **Reference:** Project Studio Knowledge Fabric API
 
 ---
@@ -15,6 +15,9 @@ This document defines the API endpoints for the Knowledge Base Tool, following t
 3. **Entity System** - Extracted knowledge entities and relationships
 4. **Insights** - Captured decisions and action items
 5. **Export** - Data portability to multiple formats
+6. **Visual Intelligence** - Image source ingestion and analysis (Phase 5)
+7. **Knowledge Graph** - Entity graph visualization, traversal, and search (Phase 6)
+8. **Reports & Infographics** - AI-powered report generation and visual exports (Phase 7)
 
 ---
 
@@ -1228,6 +1231,514 @@ DELETE /api/v1/kb/workspaces/{workspaceId}/members/{userId}
 
 ---
 
+## 11. Visual Intelligence (Image Sources)
+
+*Phase 5 — Extends Source Management with image-specific analysis*
+
+Image uploads use the existing source upload endpoint (`POST /sources` with `Content-Type: multipart/form-data`). The backend detects image content types and routes to the Gemini Vision pipeline.
+
+### Analyze Image Source
+
+Trigger visual analysis on an uploaded image source. Automatically called during processing, but can be re-triggered manually.
+
+```http
+POST /api/v1/kb/workspaces/{workspaceId}/sources/{sourceId}/analyze
+```
+
+**Request:**
+```json
+{
+  "analysisTypes": ["ocr", "entities", "description", "charts", "style"],
+  "options": {
+    "ocrLanguageHint": "en",
+    "extractEntities": true,
+    "generateDescription": true,
+    "structuredOutput": true
+  }
+}
+```
+
+**Response:**
+```json
+{
+  "jobId": "job_vision123",
+  "status": "queued",
+  "sourceId": "src_img456"
+}
+```
+
+### Get Visual Analysis Results
+
+```http
+GET /api/v1/kb/workspaces/{workspaceId}/sources/{sourceId}/analysis
+```
+
+**Response:**
+```json
+{
+  "sourceId": "src_img456",
+  "analysisStatus": "completed",
+  "results": {
+    "description": "Architecture diagram showing a microservices system with 4 services connected via an API gateway",
+    "ocrText": "API Gateway → Auth Service → User DB\n                → Product Service → Product DB\n                → Order Service → Order DB",
+    "detectedEntities": [
+      { "name": "API Gateway", "type": "tool", "confidence": 0.95, "boundingBox": [0.1, 0.05, 0.3, 0.15] },
+      { "name": "Auth Service", "type": "tool", "confidence": 0.92, "boundingBox": [0.5, 0.1, 0.7, 0.2] }
+    ],
+    "charts": [],
+    "styleAnalysis": {
+      "dominantColors": ["#1a1a2e", "#16213e", "#0f3460", "#e94560"],
+      "typography": ["sans-serif", "monospace"],
+      "layoutType": "diagram"
+    },
+    "imageMetadata": {
+      "width": 1920,
+      "height": 1080,
+      "format": "png",
+      "fileSize": 245000
+    }
+  },
+  "tokensUsed": 1580,
+  "analyzedAt": "2026-02-06T14:30:00Z"
+}
+```
+
+### Supported Image Types
+
+| Format | MIME Type | Max Size |
+|--------|-----------|----------|
+| PNG | image/png | 20MB |
+| JPEG | image/jpeg | 20MB |
+| WebP | image/webp | 20MB |
+| GIF | image/gif | 20MB (first frame only) |
+| BMP | image/bmp | 20MB |
+
+---
+
+## 12. Knowledge Graph
+
+*Phase 6 — Entity relationship visualization, traversal, and search*
+
+### Get Graph Visualization Data
+
+Returns all entities and relationships formatted for D3/Cytoscape rendering.
+
+```http
+GET /api/v1/kb/workspaces/{workspaceId}/graph
+```
+
+**Query Parameters:**
+- `entityTypes` — Comma-separated filter: `person,company,project`
+- `minConfidence` — Minimum entity confidence (0.0-1.0), default 0.5
+- `maxNodes` — Maximum nodes to return (for large graphs), default 200
+- `includeOrphans` — Include entities with no relationships, default false
+
+**Response:**
+```json
+{
+  "nodes": [
+    {
+      "id": "ent_123",
+      "label": "Nexus Platform",
+      "entityType": "project",
+      "description": "AI-powered creative production platform",
+      "confidence": 0.95,
+      "degreeCentrality": 12,
+      "pageRank": 0.087,
+      "betweennessCentrality": 0.34,
+      "communityId": "comm_1",
+      "mentionsCount": 156,
+      "attributes": { "status": "active" }
+    }
+  ],
+  "edges": [
+    {
+      "id": "rel_001",
+      "source": "ent_123",
+      "target": "ent_456",
+      "relationshipType": "owned_by",
+      "weight": 1.0,
+      "confidence": 0.92,
+      "sourceId": "src_def456"
+    }
+  ],
+  "communities": [
+    {
+      "id": "comm_1",
+      "label": "Core Product Team",
+      "nodeCount": 8,
+      "color": "#6366f1"
+    }
+  ],
+  "stats": {
+    "nodeCount": 156,
+    "edgeCount": 423,
+    "communityCount": 7,
+    "density": 0.035,
+    "averageDegree": 5.42
+  }
+}
+```
+
+### Get Node Neighbors (K-Hop Traversal)
+
+```http
+GET /api/v1/kb/workspaces/{workspaceId}/graph/nodes/{entityId}/neighbors
+```
+
+**Query Parameters:**
+- `hops` — Number of hops (1-3), default 1
+- `limit` — Max neighbors per hop, default 20
+
+**Response:**
+```json
+{
+  "centerNode": { "id": "ent_123", "label": "Nexus Platform", "entityType": "project" },
+  "nodes": [...],
+  "edges": [...],
+  "depth": 2
+}
+```
+
+### Find Paths Between Entities
+
+```http
+GET /api/v1/kb/workspaces/{workspaceId}/graph/paths
+```
+
+**Query Parameters:**
+- `from` — Source entity ID
+- `to` — Target entity ID
+- `maxDepth` — Maximum path length, default 4
+
+**Response:**
+```json
+{
+  "paths": [
+    {
+      "length": 2,
+      "nodes": ["ent_123", "ent_789", "ent_456"],
+      "edges": ["rel_001", "rel_015"]
+    }
+  ],
+  "shortestPath": 2,
+  "totalPaths": 3
+}
+```
+
+### Get Communities
+
+```http
+GET /api/v1/kb/workspaces/{workspaceId}/graph/communities
+```
+
+**Response:**
+```json
+{
+  "data": [
+    {
+      "id": "comm_1",
+      "label": "Core Product Team",
+      "summary": "Entities related to the core Nexus Platform development team and their projects",
+      "nodeCount": 8,
+      "topEntities": [
+        { "id": "ent_123", "name": "Nexus Platform", "type": "project", "pageRank": 0.087 },
+        { "id": "ent_456", "name": "Michael Gilday", "type": "person", "pageRank": 0.065 }
+      ],
+      "modularity": 0.72
+    }
+  ],
+  "total": 7
+}
+```
+
+### Detect Communities (Trigger)
+
+```http
+POST /api/v1/kb/workspaces/{workspaceId}/graph/communities/detect
+```
+
+**Request:**
+```json
+{
+  "algorithm": "louvain",
+  "resolution": 1.0,
+  "generateSummaries": true
+}
+```
+
+**Response:**
+```json
+{
+  "jobId": "job_community123",
+  "status": "queued"
+}
+```
+
+### Graph Search (GraphRAG)
+
+```http
+POST /api/v1/kb/workspaces/{workspaceId}/graph/search
+```
+
+**Request:**
+```json
+{
+  "query": "Who works on the Knowledge Base project?",
+  "mode": "hybrid",
+  "options": {
+    "localWeight": 0.6,
+    "globalWeight": 0.4,
+    "maxResults": 10,
+    "includeContext": true
+  }
+}
+```
+
+**Response:**
+```json
+{
+  "results": [
+    {
+      "entityId": "ent_456",
+      "name": "Bert Nieves",
+      "entityType": "person",
+      "relevanceScore": 0.94,
+      "context": "Bert Nieves is the technical lead for the Knowledge Base project, responsible for API development and entity extraction.",
+      "relatedEdges": [
+        { "relationshipType": "works_on", "targetName": "Knowledge Base", "weight": 1.0 }
+      ]
+    }
+  ],
+  "searchMode": "hybrid",
+  "totalResults": 5,
+  "searchTimeMs": 340
+}
+```
+
+### Get Influential Nodes
+
+```http
+GET /api/v1/kb/workspaces/{workspaceId}/graph/influential
+```
+
+**Query Parameters:**
+- `metric` — `pagerank` | `betweenness` | `degree`, default `pagerank`
+- `limit` — Number of results, default 10
+- `entityType` — Filter by type
+
+**Response:**
+```json
+{
+  "metric": "pagerank",
+  "nodes": [
+    {
+      "id": "ent_123",
+      "name": "Nexus Platform",
+      "entityType": "project",
+      "score": 0.087,
+      "rank": 1
+    }
+  ]
+}
+```
+
+---
+
+## 13. Reports & Infographics
+
+*Phase 7 — AI-powered report generation with visual exports*
+
+### Create Report Job
+
+```http
+POST /api/v1/kb/workspaces/{workspaceId}/reports
+```
+
+**Request:**
+```json
+{
+  "reportType": "executive_summary",
+  "title": "Q1 2026 Knowledge Base Overview",
+  "options": {
+    "format": "pdf",
+    "includeEntities": true,
+    "includeInsights": true,
+    "includeSources": true,
+    "maxSources": 20,
+    "dateRange": {
+      "start": "2026-01-01",
+      "end": "2026-03-31"
+    },
+    "sourceIds": null,
+    "entityTypes": null
+  },
+  "visualMode": "standard",
+  "style": {
+    "theme": "vault",
+    "accentColor": "#E80ADE"
+  }
+}
+```
+
+**Report Types:**
+- `executive_summary` — High-level workspace overview with key stats, top entities, recent insights
+- `entity_map` — Visual entity graph + relationship table + centrality rankings
+- `source_digest` — Summarized highlights from all/selected sources with citations
+- `insights_report` — Decisions, action items, findings grouped by status/type
+- `glossary_reference` — All terms with definitions, aliases, usage stats
+- `knowledge_timeline` — Chronological view of source additions, entity discoveries, insights
+
+**Visual Modes:**
+- `standard` — HTML template rendered to PDF/PNG (free, deterministic)
+- `creative` — AI-generated infographic via Nano Banana Pro ($0.15/image)
+- `illustrated` — Standard template + AI-generated illustrations via Recraft V3 ($0.04/illustration)
+
+**Response:**
+```json
+{
+  "jobId": "job_report123",
+  "status": "queued",
+  "reportType": "executive_summary",
+  "estimatedDurationMs": 15000
+}
+```
+
+### Get Report Job Status
+
+```http
+GET /api/v1/kb/workspaces/{workspaceId}/reports/jobs/{jobId}
+```
+
+**Response:**
+```json
+{
+  "jobId": "job_report123",
+  "status": "completed",
+  "progress": 100,
+  "currentStep": "complete",
+  "steps": [
+    { "name": "analyzing", "status": "completed", "durationMs": 3200 },
+    { "name": "structuring", "status": "completed", "durationMs": 1500 },
+    { "name": "generating_visuals", "status": "completed", "durationMs": 8000 },
+    { "name": "rendering", "status": "completed", "durationMs": 2100 },
+    { "name": "uploading", "status": "completed", "durationMs": 800 }
+  ],
+  "reportId": "rpt_abc123",
+  "completedAt": "2026-02-06T15:00:00Z"
+}
+```
+
+### List Reports
+
+```http
+GET /api/v1/kb/workspaces/{workspaceId}/reports
+```
+
+**Query Parameters:**
+- `reportType` — Filter by type
+- `page`, `pageSize` — Pagination
+
+**Response:**
+```json
+{
+  "data": [
+    {
+      "id": "rpt_abc123",
+      "title": "Q1 2026 Knowledge Base Overview",
+      "reportType": "executive_summary",
+      "format": "pdf",
+      "visualMode": "standard",
+      "downloadUrl": "https://storage.example.com/reports/rpt_abc123.pdf",
+      "thumbnailUrl": "https://storage.example.com/reports/rpt_abc123_thumb.png",
+      "expiresAt": "2026-02-13T15:00:00Z",
+      "fileSizeBytes": 245000,
+      "createdAt": "2026-02-06T15:00:00Z"
+    }
+  ],
+  "total": 12
+}
+```
+
+### Get Report
+
+```http
+GET /api/v1/kb/workspaces/{workspaceId}/reports/{reportId}
+```
+
+**Response:**
+```json
+{
+  "id": "rpt_abc123",
+  "title": "Q1 2026 Knowledge Base Overview",
+  "reportType": "executive_summary",
+  "format": "pdf",
+  "visualMode": "standard",
+  "downloadUrl": "https://storage.example.com/reports/rpt_abc123.pdf",
+  "thumbnailUrl": "https://storage.example.com/reports/rpt_abc123_thumb.png",
+  "expiresAt": "2026-02-13T15:00:00Z",
+  "fileSizeBytes": 245000,
+  "metadata": {
+    "entitiesIncluded": 45,
+    "insightsIncluded": 12,
+    "sourcesAnalyzed": 20,
+    "pagesGenerated": 4,
+    "aiImagesGenerated": 0,
+    "generationCost": 0.0,
+    "llmTokensUsed": 4500
+  },
+  "createdAt": "2026-02-06T15:00:00Z"
+}
+```
+
+### Delete Report
+
+```http
+DELETE /api/v1/kb/workspaces/{workspaceId}/reports/{reportId}
+```
+
+### Generate Infographic
+
+Convenience endpoint for single-image infographic generation (wraps report job with `visualMode: "creative"`).
+
+```http
+POST /api/v1/kb/workspaces/{workspaceId}/reports/infographic
+```
+
+**Request:**
+```json
+{
+  "topic": "Entity Relationship Overview",
+  "style": "modern_dark",
+  "resolution": "4k",
+  "model": "nano_banana_pro",
+  "sourceIds": null,
+  "entityTypes": null,
+  "contentFocus": "entities"
+}
+```
+
+**Response:**
+```json
+{
+  "jobId": "job_infographic456",
+  "status": "queued",
+  "estimatedDurationMs": 30000
+}
+```
+
+### Rate Limits (Updated)
+
+| Endpoint Category | Limit |
+|-------------------|-------|
+| Reports Generation | 5 requests/minute |
+| Infographic Generation | 3 requests/minute |
+| Visual Analysis | 10 requests/minute |
+| Graph Queries | 60 requests/minute |
+| Graph Mutations | 10 requests/minute |
+
+---
+
 ## Error Responses
 
 All endpoints follow standard error format:
@@ -1296,10 +1807,14 @@ For integrations that support webhooks:
 - `source.ready` - Source processing completed
 - `source.failed` - Source processing failed
 - `source.synced` - Integration source synced
+- `source.analyzed` - Visual analysis completed (image sources)
 - `entity.extracted` - Entity extraction completed
 - `export.ready` - Export download ready
+- `report.ready` - Report generation completed
+- `report.failed` - Report generation failed
+- `community.detected` - Community detection completed
 
 ---
 
 **Document Owner:** Engineering Team
-**Last Updated:** February 4, 2026
+**Last Updated:** February 6, 2026

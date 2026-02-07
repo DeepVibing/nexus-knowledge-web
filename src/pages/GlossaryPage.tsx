@@ -24,6 +24,7 @@ export default function GlossaryPage() {
   const [categoryFilter, setCategoryFilter] = useState('');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [editTerm, setEditTerm] = useState<GlossaryTermDto | null>(null);
+  const [deletingTermId, setDeletingTermId] = useState<string | null>(null);
 
   const { data, isLoading } = useGlossaryTerms(workspaceId, {
     search: search || undefined,
@@ -66,11 +67,14 @@ export default function GlossaryPage() {
   const handleDelete = async (termId: string) => {
     if (!workspaceId) return;
     if (!confirm('Are you sure you want to delete this term?')) return;
+    setDeletingTermId(termId);
     try {
       await deleteTerm.mutateAsync({ workspaceId, termId });
       success('Term deleted');
     } catch {
       showError('Failed to delete term');
+    } finally {
+      setDeletingTermId(null);
     }
   };
 
@@ -181,6 +185,7 @@ export default function GlossaryPage() {
                     term={term}
                     onEdit={() => setEditTerm(term)}
                     onDelete={() => handleDelete(term.id)}
+                    isDeleting={deletingTermId === term.id}
                   />
                 ))}
               </div>

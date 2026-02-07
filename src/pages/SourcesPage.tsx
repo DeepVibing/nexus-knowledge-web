@@ -14,6 +14,8 @@ export default function SourcesPage() {
   const { workspaceId } = useParams<{ workspaceId: string }>();
   const [search, setSearch] = useState('');
   const [showUploadModal, setShowUploadModal] = useState(false);
+  const [deletingSourceId, setDeletingSourceId] = useState<string | null>(null);
+  const [syncingSourceId, setSyncingSourceId] = useState<string | null>(null);
 
   const { data, isLoading } = useSources(workspaceId, { search: search || undefined });
   const uploadSource = useUploadSource();
@@ -49,21 +51,27 @@ export default function SourcesPage() {
   const handleDelete = async (sourceId: string) => {
     if (!workspaceId) return;
     if (!confirm('Are you sure you want to delete this source?')) return;
+    setDeletingSourceId(sourceId);
     try {
       await deleteSource.mutateAsync({ workspaceId, sourceId });
       success('Source deleted');
     } catch {
       showError('Failed to delete source');
+    } finally {
+      setDeletingSourceId(null);
     }
   };
 
   const handleSync = async (sourceId: string) => {
     if (!workspaceId) return;
+    setSyncingSourceId(sourceId);
     try {
       await syncSource.mutateAsync({ workspaceId, sourceId });
       success('Sync started');
     } catch {
       showError('Failed to start sync');
+    } finally {
+      setSyncingSourceId(null);
     }
   };
 
@@ -113,6 +121,8 @@ export default function SourcesPage() {
               source={source}
               onSync={() => handleSync(source.id)}
               onDelete={() => handleDelete(source.id)}
+              isSyncing={syncingSourceId === source.id}
+              isDeleting={deletingSourceId === source.id}
             />
           ))}
         </div>

@@ -12,11 +12,13 @@ export type SourceType =
   | 'video'
   | 'cms_content'
   | 'obsidian_vault'
-  | 'manual_entry';
+  | 'manual_entry'
+  | 'image';
 
 export type SourceStatus =
   | 'pending'
   | 'processing'
+  | 'analyzing'
   | 'ready'
   | 'failed'
   | 'stale';
@@ -136,4 +138,31 @@ export interface SourceListResponse {
   page: number;
   pageSize: number;
   totalPages: number;
+}
+
+// --- Visual Intelligence Types ---
+
+export interface DetectedEntityDto {
+  name: string;
+  type: string;
+  description?: string;
+  confidence: number;
+}
+
+export interface ImageMetadataDto {
+  width?: number;
+  height?: number;
+  format?: string;
+  detectedLanguages?: string[];
+  tags?: string[];
+}
+
+export interface VisualAnalysisResponseDto {
+  status: string;
+  extractedText?: string;
+  caption?: string;
+  detailedDescription?: string;
+  entities?: DetectedEntityDto[];
+  metadata?: ImageMetadataDto;
+  error?: string;
 }

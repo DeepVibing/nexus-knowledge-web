@@ -30,6 +30,8 @@ export const ROUTES = {
   WORKSPACE_ENTITIES: '/workspaces/:workspaceId/entities',
   WORKSPACE_GLOSSARY: '/workspaces/:workspaceId/glossary',
   WORKSPACE_INSIGHTS: '/workspaces/:workspaceId/insights',
+  WORKSPACE_GRAPH: '/workspaces/:workspaceId/graph',
+  WORKSPACE_REPORTS: '/workspaces/:workspaceId/reports',
   WORKSPACE_SETTINGS: '/workspaces/:workspaceId/settings',
   NOT_FOUND: '/404',
 } as const;
@@ -49,12 +51,20 @@ export const PAGINATION = {
 
 export const FILE_UPLOAD = {
   MAX_SIZE: 100 * 1024 * 1024, // 100MB
+  MAX_IMAGE_SIZE: 20 * 1024 * 1024, // 20MB
   ACCEPTED_DOCUMENT_TYPES: [
     'application/pdf',
     'text/plain',
     'text/markdown',
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
     'application/msword',
+  ],
+  ACCEPTED_IMAGE_TYPES: [
+    'image/png',
+    'image/jpeg',
+    'image/webp',
+    'image/gif',
+    'image/bmp',
   ],
 } as const;
 

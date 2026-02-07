@@ -47,7 +47,7 @@ export interface SearchResult {
   content?: string;
   pageNumber?: number;
   // For entities
-  entityType?: EntityType;
+  entityType?: string;
   name?: string;
   description?: string;
   // Common

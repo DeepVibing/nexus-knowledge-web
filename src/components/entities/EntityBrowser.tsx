@@ -11,6 +11,7 @@ import { cn } from '../../lib/utils';
 interface EntityBrowserProps {
   entities: EntityDto[];
   isLoading?: boolean;
+  isExtracting?: boolean;
   onEntityClick?: (entity: EntityDto) => void;
   onCreateEntity?: () => void;
   onExtractEntities?: () => void;
@@ -31,6 +32,7 @@ const entityTypes: EntityType[] = [
 export function EntityBrowser({
   entities,
   isLoading,
+  isExtracting,
   onEntityClick,
   onCreateEntity,
   onExtractEntities,
@@ -43,7 +45,7 @@ export function EntityBrowser({
       !search ||
       entity.name.toLowerCase().includes(search.toLowerCase()) ||
       entity.description?.toLowerCase().includes(search.toLowerCase());
-    const matchesType = !selectedType || entity.entityType === selectedType;
+    const matchesType = !selectedType || entity.type === selectedType;
     return matchesSearch && matchesType;
   });
 
@@ -58,7 +60,7 @@ export function EntityBrowser({
         <h1 className="text-2xl font-medium tracking-wide text-[#F5F5F5]">Entities</h1>
         <div className="flex items-center gap-2">
           {onExtractEntities && (
-            <Button variant="secondary" onClick={onExtractEntities}>
+            <Button variant="secondary" onClick={onExtractEntities} isLoading={isExtracting}>
               Extract Entities
             </Button>
           )}
@@ -124,7 +126,7 @@ export function EntityBrowser({
           }
           action={
             onExtractEntities && (
-              <Button variant="secondary" onClick={onExtractEntities}>
+              <Button variant="secondary" onClick={onExtractEntities} isLoading={isExtracting}>
                 Extract Entities
               </Button>
             )

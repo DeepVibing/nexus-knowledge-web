@@ -146,3 +146,30 @@ export function useSourceJob(
     },
   });
 }
+
+/**
+ * Trigger visual intelligence analysis on an image source
+ */
+export function useAnalyzeSource() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ workspaceId, sourceId }: { workspaceId: string; sourceId: string }) =>
+      sourcesApi.analyze(workspaceId, sourceId),
+    onSuccess: (_, { workspaceId, sourceId }) => {
+      queryClient.invalidateQueries({ queryKey: kbKeys.sources.detail(workspaceId, sourceId) });
+    },
+  });
+}
+
+/**
+ * Get visual analysis results for a source
+ */
+export function useSourceAnalysis(workspaceId: string | undefined, sourceId: string | undefined) {
+  return useQuery({
+    queryKey: [...kbKeys.sources.detail(workspaceId ?? '', sourceId ?? ''), 'analysis'] as const,
+    queryFn: () => sourcesApi.getAnalysis(workspaceId!, sourceId!),
+    enabled: !!workspaceId && !!sourceId,
+    staleTime: 1000 * 60 * 5,
+  });
+}

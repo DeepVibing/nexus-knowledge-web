@@ -1,5 +1,6 @@
 /**
  * Entities Service for Nexus Knowledge
+ * Aligned to swagger v2b API paths & payloads
  */
 
 import { apiClient } from '../lib/api-client';
@@ -11,7 +12,7 @@ import type {
   CreateEntityRequest,
   UpdateEntityRequest,
   ExtractEntitiesRequest,
-  ExtractEntitiesJobDto,
+  ExtractionJobDto,
   MergeEntitiesRequest,
 } from '../types';
 
@@ -22,7 +23,7 @@ export const entitiesApi = {
     const queryParams = new URLSearchParams();
     if (params.page) queryParams.set('page', params.page.toString());
     if (params.pageSize) queryParams.set('pageSize', params.pageSize.toString());
-    if (params.entityType) queryParams.set('entityType', params.entityType);
+    if (params.type) queryParams.set('type', params.type);
     if (params.search) queryParams.set('search', params.search);
     if (params.tags?.length) queryParams.set('tags', params.tags.join(','));
     if (params.relatedTo) queryParams.set('relatedTo', params.relatedTo);
@@ -41,25 +42,25 @@ export const entitiesApi = {
   },
 
   update: async (workspaceId: string, id: string, data: UpdateEntityRequest): Promise<EntityDto> => {
-    return apiClient.putRaw<EntityDto>(`${getBaseUrl(workspaceId)}/${id}`, data);
+    return apiClient.patchRaw<EntityDto>(`${getBaseUrl(workspaceId)}/${id}`, data);
   },
 
   delete: async (workspaceId: string, id: string): Promise<void> => {
     await apiClient.deleteRaw(`${getBaseUrl(workspaceId)}/${id}`);
   },
 
-  extract: async (workspaceId: string, data: ExtractEntitiesRequest): Promise<ExtractEntitiesJobDto> => {
-    return apiClient.postRaw<ExtractEntitiesJobDto>(`${getBaseUrl(workspaceId)}/extract`, data);
+  extract: async (workspaceId: string, data: ExtractEntitiesRequest): Promise<ExtractionJobDto> => {
+    return apiClient.postRaw<ExtractionJobDto>(`${getBaseUrl(workspaceId)}/extract`, data);
   },
 
-  getExtractionJob: async (workspaceId: string, jobId: string): Promise<ExtractEntitiesJobDto> => {
-    return apiClient.getRaw<ExtractEntitiesJobDto>(
-      `${getBaseUrl(workspaceId)}/extraction-jobs/${jobId}`
+  getExtractionJob: async (workspaceId: string, jobId: string): Promise<ExtractionJobDto> => {
+    return apiClient.getRaw<ExtractionJobDto>(
+      `${getBaseUrl(workspaceId)}/extract/${jobId}`
     );
   },
 
-  merge: async (workspaceId: string, data: MergeEntitiesRequest): Promise<EntityDto> => {
-    return apiClient.postRaw<EntityDto>(`${getBaseUrl(workspaceId)}/merge`, data);
+  merge: async (workspaceId: string, entityId: string, data: MergeEntitiesRequest): Promise<EntityDto> => {
+    return apiClient.postRaw<EntityDto>(`${getBaseUrl(workspaceId)}/${entityId}/merge`, data);
   },
 };
 

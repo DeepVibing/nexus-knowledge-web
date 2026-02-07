@@ -1,4 +1,4 @@
-import { Edit3, Trash2, Hash } from 'lucide-react';
+import { Edit3, Trash2, Hash, Loader2 } from 'lucide-react';
 import { Badge } from '../common/Badge';
 import { Card } from '../common/Card';
 import type { GlossaryTermDto } from '../../types';
@@ -9,9 +9,10 @@ interface GlossaryTermCardProps {
   onEdit?: () => void;
   onDelete?: () => void;
   onClick?: () => void;
+  isDeleting?: boolean;
 }
 
-export function GlossaryTermCard({ term, onEdit, onDelete, onClick }: GlossaryTermCardProps) {
+export function GlossaryTermCard({ term, onEdit, onDelete, onClick, isDeleting }: GlossaryTermCardProps) {
   return (
     <Card hover onClick={onClick} className="group relative">
       <div className="flex items-start gap-4">
@@ -74,10 +75,16 @@ export function GlossaryTermCard({ term, onEdit, onDelete, onClick }: GlossaryTe
                 e.stopPropagation();
                 onDelete();
               }}
-              className="p-2 text-[#666666] hover:text-red-400 hover:bg-[#2A2A2A] rounded-sm transition-colors"
+              disabled={isDeleting}
+              className={cn(
+                'p-2 rounded-sm transition-colors',
+                isDeleting
+                  ? 'text-[#666666] opacity-50 cursor-not-allowed'
+                  : 'text-[#666666] hover:text-red-400 hover:bg-[#2A2A2A]'
+              )}
               title="Delete"
             >
-              <Trash2 className="h-4 w-4" />
+              {isDeleting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
             </button>
           )}
         </div>

@@ -5,7 +5,9 @@
       "Bash(npm run build:*)",
       "Bash(timeout 10 npm run dev)",
       "Bash(ls:*)",
-      "WebFetch(domain:www.deepvibe.com)"
+      "WebFetch(domain:www.deepvibe.com)",
+      "Bash(grep:*)",
+      "WebSearch"
     ]
   }
 }

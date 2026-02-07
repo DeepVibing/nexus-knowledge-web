@@ -1,5 +1,6 @@
 /**
  * Entity Types for Nexus Knowledge
+ * Aligned to swagger v2b API shapes
  */
 
 export type EntityType =
@@ -13,90 +14,92 @@ export type EntityType =
   | 'document'
   | 'term';
 
+/** List-level entity (slim shape from GET /entities) */
 export interface EntityDto {
   id: string;
-  workspaceId: string;
-  entityType: EntityType;
+  type: string;
   name: string;
   aliases?: string[];
   description?: string;
-  attributes: Record<string, unknown>;
-  relationshipsCount: number;
-  mentionsCount: number;
-  notes?: string;
   tags?: string[];
   createdAt: string;
   updatedAt: string;
 }
 
+/** Detail-level entity (GET /entities/{id}) — adds counts & notes */
 export interface EntityDetailDto extends EntityDto {
-  relationships: EntityRelationship[];
-  mentions: EntityMention[];
+  notes?: string;
+  attributes?: Record<string, unknown>;
+  relationshipsCount: number;
+  mentionsCount: number;
 }
 
-export interface EntityRelationship {
-  targetEntityId: string;
-  targetEntityName: string;
-  targetEntityType: EntityType;
+/** Compact entity reference used inside RelationshipDto */
+export interface EntityRefDto {
+  id: string;
+  name: string;
+  type: string;
+}
+
+/** Relationship between two entities (GET /entities/{id}/relationships) */
+export interface RelationshipDto {
+  id: string;
+  sourceEntity: EntityRefDto;
+  targetEntity: EntityRefDto;
   relationshipType: string;
   strength?: number;
-  sourceId?: string;
+  createdAt: string;
 }
 
-export interface EntityMention {
+/** Mention of an entity in a source (GET /entities/{id}/mentions) */
+export interface MentionDto {
+  id: string;
   sourceId: string;
   sourceName: string;
   chunkId: string;
   context: string;
   pageNumber?: number;
-  timestamp?: { start: number; end: number };
   confidence: number;
+  createdAt: string;
 }
 
 export interface CreateEntityRequest {
-  entityType: EntityType;
+  type: string;
   name: string;
   aliases?: string[];
   description?: string;
-  attributes?: Record<string, unknown>;
+  notes?: string;
   tags?: string[];
 }
 
 export interface UpdateEntityRequest {
   name?: string;
+  type?: string;
   aliases?: string[];
   description?: string;
-  attributes?: Record<string, unknown>;
   notes?: string;
   tags?: string[];
 }
 
 export interface ExtractEntitiesRequest {
   sourceIds?: string[];
-  entityTypes?: EntityType[];
-  options?: ExtractEntitiesOptions;
-}
-
-export interface ExtractEntitiesOptions {
+  entityTypes?: string[];
   mergeExisting?: boolean;
   confidenceThreshold?: number;
   includeRelationships?: boolean;
 }
 
-export interface ExtractEntitiesJobDto {
-  jobId: string;
-  status: 'queued' | 'processing' | 'completed' | 'failed';
-  results?: {
-    entitiesCreated: number;
-    entitiesMerged: number;
-    relationshipsCreated: number;
-  };
-  entities?: { id: string; name: string; type: EntityType }[];
+export interface ExtractionJobDto {
+  id: string;
+  status: string;
+  progress?: number;
+  errorMessage?: string;
+  result?: string;
+  createdAt: string;
   completedAt?: string;
 }
 
 export interface MergeEntitiesRequest {
-  sourceEntityId: string;
   targetEntityId: string;
   mergeAliases?: boolean;
   mergeRelationships?: boolean;
@@ -104,7 +107,7 @@ export interface MergeEntitiesRequest {
 }
 
 export interface EntityListParams {
-  entityType?: EntityType;
+  type?: EntityType;
   search?: string;
   tags?: string[];
   relatedTo?: string;
@@ -118,5 +121,4 @@ export interface EntityListResponse {
   total: number;
   page: number;
   pageSize: number;
-  totalPages: number;
 }

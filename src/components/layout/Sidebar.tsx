@@ -5,6 +5,8 @@ import {
   Users,
   BookOpen,
   Lightbulb,
+  Share2,
+  FileBarChart,
   Settings,
   ChevronLeft,
   ChevronRight,
@@ -46,6 +48,18 @@ const navItems = [
     name: 'Insights',
     icon: Lightbulb,
     path: (id: string) => ROUTES.WORKSPACE_INSIGHTS.replace(':workspaceId', id),
+    section: 'navigate',
+  },
+  {
+    name: 'Graph',
+    icon: Share2,
+    path: (id: string) => ROUTES.WORKSPACE_GRAPH.replace(':workspaceId', id),
+    section: 'navigate',
+  },
+  {
+    name: 'Reports',
+    icon: FileBarChart,
+    path: (id: string) => ROUTES.WORKSPACE_REPORTS.replace(':workspaceId', id),
     section: 'navigate',
   },
   {

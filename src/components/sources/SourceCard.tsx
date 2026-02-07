@@ -1,4 +1,4 @@
-import { FileText, Globe, MessageSquare, RefreshCw, Trash2, Clock } from 'lucide-react';
+import { FileText, Globe, MessageSquare, RefreshCw, Trash2, Clock, Loader2 } from 'lucide-react';
 import { Badge } from '../common/Badge';
 import { Card } from '../common/Card';
 import type { SourceDto, SourceStatus } from '../../types';
@@ -9,11 +9,14 @@ interface SourceCardProps {
   onSync?: () => void;
   onDelete?: () => void;
   onClick?: () => void;
+  isSyncing?: boolean;
+  isDeleting?: boolean;
 }
 
 const statusVariants: Record<SourceStatus, 'default' | 'success' | 'warning' | 'error' | 'info'> = {
   pending: 'warning',
   processing: 'info',
+  analyzing: 'info',
   ready: 'success',
   failed: 'error',
   stale: 'warning',
@@ -25,7 +28,7 @@ const typeIcons: Record<string, typeof FileText> = {
   slack_channel: MessageSquare,
 };
 
-export function SourceCard({ source, onSync, onDelete, onClick }: SourceCardProps) {
+export function SourceCard({ source, onSync, onDelete, onClick, isSyncing, isDeleting }: SourceCardProps) {
   const Icon = typeIcons[source.sourceType] || FileText;
 
   return (
@@ -86,10 +89,16 @@ export function SourceCard({ source, onSync, onDelete, onClick }: SourceCardProp
                 e.stopPropagation();
                 onSync();
               }}
-              className="p-2 text-[#666666] hover:text-[#F5F5F5] hover:bg-[#2A2A2A] rounded-sm transition-colors"
+              disabled={isSyncing}
+              className={cn(
+                'p-2 rounded-sm transition-colors',
+                isSyncing
+                  ? 'text-[#666666] opacity-50 cursor-not-allowed'
+                  : 'text-[#666666] hover:text-[#F5F5F5] hover:bg-[#2A2A2A]'
+              )}
               title="Sync"
             >
-              <RefreshCw className="h-4 w-4" />
+              {isSyncing ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
             </button>
           )}
           {onDelete && (
@@ -98,10 +107,16 @@ export function SourceCard({ source, onSync, onDelete, onClick }: SourceCardProp
                 e.stopPropagation();
                 onDelete();
               }}
-              className="p-2 text-[#666666] hover:text-red-400 hover:bg-[#2A2A2A] rounded-sm transition-colors"
+              disabled={isDeleting}
+              className={cn(
+                'p-2 rounded-sm transition-colors',
+                isDeleting
+                  ? 'text-[#666666] opacity-50 cursor-not-allowed'
+                  : 'text-[#666666] hover:text-red-400 hover:bg-[#2A2A2A]'
+              )}
               title="Delete"
             >
-              <Trash2 className="h-4 w-4" />
+              {isDeleting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
             </button>
           )}
         </div>

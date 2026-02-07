@@ -23,6 +23,7 @@ export default function EntitiesPage() {
     <EntityBrowser
       entities={data?.data || []}
       isLoading={isLoading}
+      isExtracting={extractEntities.isPending}
       onExtractEntities={handleExtract}
     />
   );

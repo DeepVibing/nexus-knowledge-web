@@ -14,6 +14,8 @@ export * from './glossary';
 export * from './insight';
 export * from './export';
 export * from './connector';
+export * from './knowledgeGraph';
+export * from './report';
 
 // Query Key Factory
 export const kbKeys = {
@@ -103,5 +105,33 @@ export const kbKeys = {
       [...kbKeys.connectors.connections(workspaceId), connectionId] as const,
     resources: (workspaceId: string, connectionId: string) =>
       [...kbKeys.connectors.connectionDetail(workspaceId, connectionId), 'resources'] as const,
+  },
+
+  // Knowledge Graph
+  graph: {
+    all: (workspaceId: string) => ['kb', 'workspaces', workspaceId, 'graph'] as const,
+    data: (workspaceId: string, params?: Record<string, unknown>) =>
+      [...kbKeys.graph.all(workspaceId), 'data', params] as const,
+    neighbors: (workspaceId: string, entityId: string, params?: Record<string, unknown>) =>
+      [...kbKeys.graph.all(workspaceId), 'neighbors', entityId, params] as const,
+    paths: (workspaceId: string, fromId: string, toId: string) =>
+      [...kbKeys.graph.all(workspaceId), 'paths', fromId, toId] as const,
+    communities: (workspaceId: string) =>
+      [...kbKeys.graph.all(workspaceId), 'communities'] as const,
+    search: (workspaceId: string, query: string) =>
+      [...kbKeys.graph.all(workspaceId), 'search', query] as const,
+    influential: (workspaceId: string, params?: Record<string, unknown>) =>
+      [...kbKeys.graph.all(workspaceId), 'influential', params] as const,
+  },
+
+  // Reports
+  reports: {
+    all: (workspaceId: string) => ['kb', 'workspaces', workspaceId, 'reports'] as const,
+    list: (workspaceId: string, params?: Record<string, unknown>) =>
+      [...kbKeys.reports.all(workspaceId), 'list', params] as const,
+    detail: (workspaceId: string, reportId: string) =>
+      [...kbKeys.reports.all(workspaceId), reportId] as const,
+    job: (workspaceId: string, jobId: string) =>
+      [...kbKeys.reports.all(workspaceId), 'jobs', jobId] as const,
   },
 } as const;

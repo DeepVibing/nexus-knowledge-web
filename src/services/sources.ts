@@ -11,6 +11,7 @@ import type {
   AddSourceUrlRequest,
   AddSourceConnectRequest,
   SyncSourceRequest,
+  VisualAnalysisResponseDto,
 } from '../types';
 
 const getBaseUrl = (workspaceId: string) => `/api/v1/kb/workspaces/${workspaceId}/sources`;
@@ -62,6 +63,18 @@ export const sourcesApi = {
   getJob: async (workspaceId: string, sourceId: string, jobId: string): Promise<SourceProcessingJobDto> => {
     return apiClient.getRaw<SourceProcessingJobDto>(
       `${getBaseUrl(workspaceId)}/${sourceId}/jobs/${jobId}`
+    );
+  },
+
+  /** POST /sources/{sourceId}/analyze — trigger visual intelligence analysis */
+  analyze: async (workspaceId: string, sourceId: string): Promise<void> => {
+    await apiClient.postRaw(`${getBaseUrl(workspaceId)}/${sourceId}/analyze`, {});
+  },
+
+  /** GET /sources/{sourceId}/analysis — get visual analysis results */
+  getAnalysis: async (workspaceId: string, sourceId: string): Promise<VisualAnalysisResponseDto> => {
+    return apiClient.getRaw<VisualAnalysisResponseDto>(
+      `${getBaseUrl(workspaceId)}/${sourceId}/analysis`
     );
   },
 };

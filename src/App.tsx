@@ -20,6 +20,8 @@ const SourcesPage = lazy(() => import('./pages/SourcesPage'));
 const EntitiesPage = lazy(() => import('./pages/EntitiesPage'));
 const GlossaryPage = lazy(() => import('./pages/GlossaryPage'));
 const InsightsPage = lazy(() => import('./pages/InsightsPage'));
+const KnowledgeGraphPage = lazy(() => import('./pages/KnowledgeGraphPage'));
+const ReportsPage = lazy(() => import('./pages/ReportsPage'));
 const SettingsPage = lazy(() => import('./pages/SettingsPage'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 
@@ -84,6 +86,8 @@ function AppRoutes() {
               <Route path="entities" element={<EntitiesPage />} />
               <Route path="glossary" element={<GlossaryPage />} />
               <Route path="insights" element={<InsightsPage />} />
+              <Route path="graph" element={<KnowledgeGraphPage />} />
+              <Route path="reports" element={<ReportsPage />} />
               <Route path="settings" element={<SettingsPage />} />
             </Route>
           </Route>

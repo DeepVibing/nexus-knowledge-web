@@ -1,14 +1,14 @@
 import { User, Building, Folder, Wrench, Lightbulb, Calendar, MapPin, FileText, BookOpen } from 'lucide-react';
 import { Badge } from '../common/Badge';
 import { Card } from '../common/Card';
-import type { EntityDto, EntityType } from '../../types';
+import type { EntityDto } from '../../types';
 
 interface EntityCardProps {
   entity: EntityDto;
   onClick?: () => void;
 }
 
-const typeIcons: Record<EntityType, typeof User> = {
+const typeIcons: Record<string, typeof User> = {
   person: User,
   company: Building,
   project: Folder,
@@ -20,7 +20,7 @@ const typeIcons: Record<EntityType, typeof User> = {
   term: BookOpen,
 };
 
-const typeColors: Record<EntityType, string> = {
+const typeColors: Record<string, string> = {
   person: 'bg-blue-900 text-blue-400',
   company: 'bg-purple-900 text-purple-400',
   project: 'bg-emerald-900 text-emerald-400',
@@ -33,14 +33,14 @@ const typeColors: Record<EntityType, string> = {
 };
 
 export function EntityCard({ entity, onClick }: EntityCardProps) {
-  const Icon = typeIcons[entity.entityType] || Lightbulb;
+  const Icon = typeIcons[entity.type] || Lightbulb;
 
   return (
     <Card hover onClick={onClick}>
       <div className="flex items-start gap-4">
         {/* Icon */}
         <div
-          className={`w-10 h-10 rounded-sm ${typeColors[entity.entityType]} flex items-center justify-center flex-shrink-0 border border-[#2A2A2A]`}
+          className={`w-10 h-10 rounded-sm ${typeColors[entity.type] || 'bg-[#1C1C1C] text-[#A0A0A0]'} flex items-center justify-center flex-shrink-0 border border-[#2A2A2A]`}
         >
           <Icon className="h-5 w-5" />
         </div>
@@ -50,7 +50,7 @@ export function EntityCard({ entity, onClick }: EntityCardProps) {
           <div className="flex items-center gap-2 mb-1">
             <h3 className="font-medium text-[#F5F5F5] text-sm truncate">{entity.name}</h3>
             <Badge variant="default" size="sm">
-              {entity.entityType}
+              {entity.type}
             </Badge>
           </div>
 
@@ -59,11 +59,6 @@ export function EntityCard({ entity, onClick }: EntityCardProps) {
               {entity.description}
             </p>
           )}
-
-          <div className="flex items-center gap-4 text-xs text-[#666666]" style={{ fontFamily: 'var(--font-mono)' }}>
-            <span>{entity.mentionsCount} mentions</span>
-            <span>{entity.relationshipsCount} relationships</span>
-          </div>
 
           {entity.aliases && entity.aliases.length > 0 && (
             <div className="flex flex-wrap gap-1 mt-2">

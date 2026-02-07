@@ -130,8 +130,15 @@ export function useMergeEntities() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ workspaceId, data }: { workspaceId: string; data: MergeEntitiesRequest }) =>
-      entitiesApi.merge(workspaceId, data),
+    mutationFn: ({
+      workspaceId,
+      entityId,
+      data,
+    }: {
+      workspaceId: string;
+      entityId: string;
+      data: MergeEntitiesRequest;
+    }) => entitiesApi.merge(workspaceId, entityId, data),
     onSuccess: (_, { workspaceId }) => {
       queryClient.invalidateQueries({ queryKey: kbKeys.entities.all(workspaceId) });
     },

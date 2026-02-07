@@ -1,4 +1,4 @@
-import { Edit3, Trash2, Calendar, User } from 'lucide-react';
+import { Edit3, Trash2, Calendar, User, Loader2 } from 'lucide-react';
 import { Badge } from '../common/Badge';
 import { Card } from '../common/Card';
 import type { InsightDto, InsightType, InsightStatus } from '../../types';
@@ -9,6 +9,7 @@ interface InsightCardProps {
   onEdit?: () => void;
   onDelete?: () => void;
   onClick?: () => void;
+  isDeleting?: boolean;
 }
 
 const typeLabels: Record<InsightType, string> = {
@@ -31,7 +32,7 @@ const statusColors: Record<InsightStatus, string> = {
   deferred: 'border-l-[#666666]',
 };
 
-export function InsightCard({ insight, onEdit, onDelete, onClick }: InsightCardProps) {
+export function InsightCard({ insight, onEdit, onDelete, onClick, isDeleting }: InsightCardProps) {
   return (
     <Card hover onClick={onClick} className={cn('group relative border-l-2', statusColors[insight.status])}>
       <div className="flex items-start gap-4">
@@ -103,10 +104,16 @@ export function InsightCard({ insight, onEdit, onDelete, onClick }: InsightCardP
                 e.stopPropagation();
                 onDelete();
               }}
-              className="p-2 text-[#666666] hover:text-red-400 hover:bg-[#2A2A2A] rounded-sm transition-colors"
+              disabled={isDeleting}
+              className={cn(
+                'p-2 rounded-sm transition-colors',
+                isDeleting
+                  ? 'text-[#666666] opacity-50 cursor-not-allowed'
+                  : 'text-[#666666] hover:text-red-400 hover:bg-[#2A2A2A]'
+              )}
               title="Delete"
             >
-              <Trash2 className="h-4 w-4" />
+              {isDeleting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
             </button>
           )}
         </div>
